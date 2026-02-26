@@ -7,8 +7,8 @@ import { Principal } from './pages/principal/principal';
 
 export const routes: Routes = [
     { path: '', component: Inicio },
-    { path: '**', component: NoEncontrado },
     { path: 'login', component: Login },
     { path: 'register', component: Register },
-    { path: 'principal', component: Principal }
+    { path: 'principal', component: Principal },
+    { path: '**', component: NoEncontrado }
 ];
