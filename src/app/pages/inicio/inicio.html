@@ -1,1 +1,53 @@
-<p>inicio works!</p>
+<nav class="navbar">
+  <div class="logo">
+    <img src="Logo_SS.jpeg" alt="Logo" />
+    <a routerLink="/" class="site-title">Hospedaje Santandereano del Sur</a>
+  </div>
+
+  <ul class="menu">
+    <li><a routerLink="/login" class="btn btn-outline">Iniciar Sesión</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Bienvenido al Hospedaje Santandereano del Sur</h1>
+    <p>Descubre el espacio perfecto para tu estancia.</p>
+  </div>
+</section>
+
+<section class="rooms">
+  <div class="container">
+    <h2>Nuestras Habitaciones</h2>
+
+    <div class="room-grid">
+      <div class="room-card" *ngFor="let room of habitaciones">
+        <img [src]="room.imagen" [alt]="room.nombre" />
+        <div class="card-content">
+          <h3>{{ room.nombre }}</h3>
+          <p>{{ room.descripcion }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about">
+  <div class="container about-grid">
+    <div>
+      <h2>Nuestra Historia y Misión</h2>
+      <p class="lead">
+        Ofrecemos un refugio de paz y comodidad.
+      </p>
+      <p>
+        Fundado en el corazón de Santander, hemos crecido manteniendo la calidez de la hospitalidad tradicional colombiana. Cada rincón de nuestro hotel está diseñado pensando en su descanso y productividad, asegurando una experiencia única para cada huésped.
+      </p>
+    </div>
+
+    <div>
+      <img src="sobreNosotros.png" alt="Hotel" />
+    </div>
+  </div>
+</section>
+
+<app-footer></app-footer>
