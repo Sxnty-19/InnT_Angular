@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { ChangeDetectorRef } from '@angular/core';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-register',
@@ -10,149 +12,121 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './register.css',
 })
 export class Register {
-  formData = {
-    primer_nombre: '',
-    segundo_nombre: '',
-    primer_apellido: '',
-    segundo_apellido: '',
-    telefono: '',
-    correo: '',
-    username: '',
-    password: ''
-  };
 
-  confirmPassword: string = '';
+  formData = this.getEmptyForm();
+  confirmPassword = '';
 
-  inlineError: string = '';
-  isLoading: boolean = false;
+  inlineError = '';
+  isLoading = false;
 
-  passwordVisible: boolean = false;
-  confirmPasswordVisible: boolean = false;
+  passwordVisible = false;
+  confirmPasswordVisible = false;
 
-  message: string = '';
-  isSuccess: boolean = false;
-  showMessage: boolean = false;
+  message = '';
+  isSuccess = false;
+  showMessage = false;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private auth: Auth,
+    private cd: ChangeDetectorRef
+  ) { }
+
+  private getEmptyForm() {
+    return {
+      primer_nombre: '',
+      segundo_nombre: '',
+      primer_apellido: '',
+      segundo_apellido: '',
+      telefono: '',
+      correo: '',
+      username: '',
+      password: ''
+    };
+  }
 
   togglePassword(field: string) {
-    if (field === 'password') {
-      this.passwordVisible = !this.passwordVisible;
-    } else {
-      this.confirmPasswordVisible = !this.confirmPasswordVisible;
-    }
+    field === 'password'
+      ? this.passwordVisible = !this.passwordVisible
+      : this.confirmPasswordVisible = !this.confirmPasswordVisible;
   }
 
-  async registrar() {
+  registrar() {
 
-  }
+    this.resetMessages();
 
-  irLogin() {
-    this.router.navigate(['/login']);
-  }
-}
-/*
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-@Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
-})
-export class RegisterComponent {
-
-  formData = {
-    primer_nombre: '',
-    segundo_nombre: '',
-    primer_apellido: '',
-    segundo_apellido: '',
-    telefono: '',
-    correo: '',
-    username: '',
-    password: ''
-  };
-
-  confirmPassword: string = '';
-
-  inlineError: string = '';
-  isLoading: boolean = false;
-
-  passwordVisible: boolean = false;
-  confirmPasswordVisible: boolean = false;
-
-  message: string = '';
-  isSuccess: boolean = false;
-  showMessage: boolean = false;
-
-  constructor(private router: Router) {}
-
-  togglePassword(field: string) {
-    if (field === 'password') {
-      this.passwordVisible = !this.passwordVisible;
-    } else {
-      this.confirmPasswordVisible = !this.confirmPasswordVisible;
-    }
-  }
-
-  async registrar() {
-
-    this.inlineError = '';
-    this.showMessage = false;
-
-    // Validación contraseñas
-    if (this.formData.password !== this.confirmPassword) {
-      this.inlineError = 'Las contraseñas no coinciden';
+    const validationError = this.validateForm();
+    if (validationError) {
+      this.inlineError = validationError;
       return;
     }
 
     this.isLoading = true;
 
-    try {
+    this.auth.register(this.formData)
+      .subscribe({
+        next: () => this.handleSuccess(),
+        error: (error) => this.handleError(error)
+      });
+  }
 
-      const response = await fetch(
-        'https://inntech-backend.onrender.com/auth/register',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id_rol: 3,
-            estado: 1,
-            ...this.formData
-          })
-        }
-      );
+  private validateForm(): string | null {
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        this.message = result.detail || 'Error al registrar';
-        this.isSuccess = false;
-        this.showMessage = true;
-        return;
-      }
-
-      this.message = 'Usuario registrado correctamente';
-      this.isSuccess = true;
-      this.showMessage = true;
-
-      setTimeout(() => {
-        this.router.navigate(['/login']);
-      }, 1500);
-
-    } catch (error) {
-      this.inlineError = 'Error de conexión';
-    } finally {
-      this.isLoading = false;
+    if (
+      !this.formData.primer_nombre ||
+      !this.formData.primer_apellido ||
+      !this.formData.segundo_apellido ||
+      !this.formData.username ||
+      !this.formData.password ||
+      !this.confirmPassword
+    ) {
+      return 'Por favor complete los campos obligatorios';
     }
+
+    if (this.formData.telefono && !/^[0-9]+$/.test(this.formData.telefono)) {
+      return 'El teléfono solo puede contener números';
+    }
+
+    if (this.formData.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.correo)) {
+      return 'Ingrese un correo electrónico válido';
+    }
+
+    if (this.formData.password.length < 6) {
+      return 'La contraseña debe tener mínimo 6 caracteres';
+    }
+
+    if (this.formData.password !== this.confirmPassword) {
+      return 'Las contraseñas no coinciden';
+    }
+
+    return null;
+  }
+
+  private handleSuccess() {
+    this.isSuccess = true;
+    this.message = 'Usuario registrado correctamente';
+    this.showMessage = true;
+
+    this.formData = this.getEmptyForm();
+    this.confirmPassword = '';
+    this.isLoading = false;
+
+    this.cd.detectChanges();
+  }
+
+  private handleError(error: any) {
+    this.inlineError = error.error?.detail || 'Error al registrar usuario';
+    this.isLoading = false;
+    this.cd.detectChanges();
+  }
+
+  private resetMessages() {
+    this.inlineError = '';
+    this.message = '';
+    this.showMessage = false;
   }
 
   irLogin() {
     this.router.navigate(['/login']);
   }
 }
-*/
