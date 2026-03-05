@@ -1,0 +1,73 @@
+.form-section {
+  min-height: 100vh;
+  background: #0f172a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.form-card {
+  background: #1f2937;
+  padding: 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+}
+
+h1 {
+  color: #fcd34d;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  margin-top: 5px;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  background: #fcd34d;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.inline-error {
+  color: #ef4444;
+  margin-bottom: 15px;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.message-modal {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+.message-content {
+  background: #ef4444;
+  padding: 12px 20px;
+  border-radius: 6px;
+}
+
+.message-content.success {
+  background: #10b981;
+}

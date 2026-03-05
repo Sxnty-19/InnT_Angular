@@ -1,1 +1,76 @@
-<p>login works!</p>
+<section class="form-section">
+
+  <div class="form-card">
+
+    <h1>Iniciar Sesión</h1>
+
+    <p *ngIf="inlineError" class="inline-error">
+      {{ inlineError }}
+    </p>
+
+    <form (ngSubmit)="login()" #loginForm="ngForm">
+
+      <div class="form-group">
+        <label>Usuario</label>
+        <input
+          type="text"
+          name="username"
+          [(ngModel)]="username"
+          required
+          [disabled]="isLoading">
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+
+        <div class="password-wrapper">
+          <input
+            [type]="passwordVisible ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            required
+            [disabled]="isLoading">
+
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()">
+            👁
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="link-btn"
+          (click)="recuperarPassword()">
+          ¿Olvidaste tu contraseña?
+        </button>
+      </div>
+
+      <button
+        type="submit"
+        class="btn-login"
+        [disabled]="isLoading">
+        {{ isLoading ? 'Cargando...' : 'Ingresar' }}
+      </button>
+
+      <div class="links">
+        <button type="button" (click)="irRegistro()" class="link-btn">
+          ¿No tienes cuenta? Regístrate
+        </button>
+
+        <button type="button" (click)="volverInicio()" class="link-btn">
+          ← Volver al inicio
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div *ngIf="showMessage" class="message-modal">
+    <div class="message-content" [class.success]="isSuccess">
+      {{ message }}
+    </div>
+  </div>
+
+</section>
