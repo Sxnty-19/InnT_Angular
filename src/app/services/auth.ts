@@ -13,4 +13,10 @@ export class Auth {
   register(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, data);
   }
+
+  login(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, data, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+  }
 }
