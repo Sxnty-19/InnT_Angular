@@ -1,1 +1,66 @@
-<p>register works!</p>
+<section class="form-section">
+
+    <div class="form-card">
+
+        <h1>Registro</h1>
+
+        <p *ngIf="inlineError" class="inline-error">
+            {{ inlineError }}
+        </p>
+
+        <form (ngSubmit)="registrar()">
+
+            <div class="form-grid">
+
+                <input [(ngModel)]="formData.primer_nombre" name="primer_nombre" placeholder="Primer Nombre" required>
+                <input [(ngModel)]="formData.segundo_nombre" name="segundo_nombre" placeholder="Segundo Nombre">
+
+                <input [(ngModel)]="formData.primer_apellido" name="primer_apellido" placeholder="Primer Apellido"
+                    required>
+                <input [(ngModel)]="formData.segundo_apellido" name="segundo_apellido" placeholder="Segundo Apellido">
+
+                <input [(ngModel)]="formData.telefono" name="telefono" placeholder="Teléfono" required>
+                <input [(ngModel)]="formData.correo" name="correo" type="email" placeholder="Correo" required>
+
+                <input [(ngModel)]="formData.username" name="username" placeholder="Usuario" required>
+
+                <div class="password-wrapper">
+                    <input [type]="passwordVisible ? 'text' : 'password'" [(ngModel)]="formData.password"
+                        name="password" placeholder="Contraseña" required>
+
+                    <button type="button" (click)="togglePassword('password')">
+                        👁
+                    </button>
+                </div>
+
+                <div class="password-wrapper">
+                    <input [type]="confirmPasswordVisible ? 'text' : 'password'" [(ngModel)]="confirmPassword"
+                        name="confirmPassword" placeholder="Confirmar Contraseña" required>
+
+                    <button type="button" (click)="togglePassword('confirm')">
+                        👁
+                    </button>
+                </div>
+
+            </div>
+
+            <br>
+
+            <button type="submit" [disabled]="isLoading">
+                {{ isLoading ? 'Registrando...' : 'Registrar Cuenta' }}
+            </button>
+
+            <button type="button" class="link-btn" (click)="irLogin()">
+                ← Ya tengo cuenta
+            </button>
+
+        </form>
+    </div>
+
+    <div *ngIf="showMessage" class="message-modal">
+        <div class="message-content" [class.success]="isSuccess">
+            {{ message }}
+        </div>
+    </div>
+
+</section>

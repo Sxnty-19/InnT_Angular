@@ -1,0 +1,61 @@
+.form-section {
+  min-height: 100vh;
+  background: #0f172a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.form-card {
+  background: #1f2937;
+  padding: 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+input {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+.password-wrapper {
+  display: flex;
+  gap: 5px;
+}
+
+button {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.inline-error {
+  color: #ef4444;
+  margin-bottom: 15px;
+}
+
+.message-modal {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+.message-content {
+  background: #ef4444;
+  padding: 12px 20px;
+  border-radius: 6px;
+}
+
+.message-content.success {
+  background: #10b981;
+}
