@@ -1,64 +1,23 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-
-@Component({
-  selector: 'app-navbar',
-  imports: [],
-  templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
-})
-export class Navbar {
-  fullName: string = '';
-
-  constructor(private router: Router) { }
-
-  ngOnInit(): void {
-    // Tomamos el nombre completo directamente del localStorage
-    const nombre = localStorage.getItem('nombre');
-    if (nombre) {
-      this.fullName = nombre;
-    }
-  }
-
-  irPrincipal(): void {
-    this.router.navigate(['/principal']);
-  }
-
-  editarPerfil(): void {
-    this.router.navigate(['/perfil']);
-  }
-
-  cerrarSesion(): void {
-    localStorage.clear();
-    this.router.navigate(['/login']);
-  }
-
-  handleKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' || event.key === ' ') {
-      this.irPrincipal();
-    }
-  }
-}
-/*
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.css',
 })
-export class NavbarComponent implements OnInit {
-  fullName: string = '';
+export class Navbar implements OnInit {
 
-  constructor(private router: Router) {}
+  fullName = '';
+
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
-    // Tomamos el nombre completo directamente del localStorage
-    const nombre = localStorage.getItem('nombre');
-    if (nombre) {
-      this.fullName = nombre;
-    }
+    this.fullName = localStorage.getItem('nombre')
+      || 'Acceso Denegado (PERMISOS BLOQUEADOS)';
   }
 
   irPrincipal(): void {
@@ -80,4 +39,3 @@ export class NavbarComponent implements OnInit {
     }
   }
 }
-*/
