@@ -1,1 +1,18 @@
-<p>navbar works!</p>
+<nav class="navbar">
+    <div class="nav-left clickable" (click)="irPrincipal()" role="button" tabindex="0"
+        (keydown)="handleKeyDown($event)">
+        <img src="Logo_SS.jpeg" alt="Logo de Hotel InnTech" class="logo" />
+        <h1 class="brand">Hotel Santadereano Del Sur</h1>
+    </div>
+
+    <div class="nav-right">
+        <span *ngIf="fullName" class="user-name desktop-only">{{ fullName }}</span>
+
+        <button class="nav-btn" (click)="editarPerfil()">
+            <span class="desktop-text">Editar perfil</span>
+        </button>
+        <button class="nav-btn logout" (click)="cerrarSesion()">
+            <span class="desktop-text">Cerrar sesión</span>
+        </button>
+    </div>
+</nav>

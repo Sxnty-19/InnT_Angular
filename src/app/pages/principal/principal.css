@@ -1,0 +1,9 @@
+.principal-container{
+  min-height: calc(100vh - 0px); /* resta altura del navbar */
+  display: flex;
+  flex-direction: column;
+}
+
+.principal-content{
+  flex: 1;
+}
