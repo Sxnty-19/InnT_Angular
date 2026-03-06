@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class Auth {
+
   private apiUrl = 'http://127.0.0.1:8000/auth';
 
   constructor(private http: HttpClient) { }
@@ -15,8 +16,6 @@ export class Auth {
   }
 
   login(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, data, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    });
+    return this.http.post(`${this.apiUrl}/login`, data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
   }
 }

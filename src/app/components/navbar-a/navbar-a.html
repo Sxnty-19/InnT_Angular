@@ -1,1 +1,26 @@
-<p>navbar-a works!</p>
+<nav class="mod-nav">
+
+    <div class="nav-wrapper">
+        <p *ngIf="error" class="error">
+            {{ error }}
+        </p>
+
+        <div *ngIf="isLoading" class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+
+        <div *ngIf="!isLoading && modulos.length > 0" class="mod-buttons-container" [class.open]="isMenuOpen">
+
+            <button *ngFor="let m of modulos" class="mod-btn" (click)="ir(m.ruta)">
+                {{ m.nombre }}
+            </button>
+
+        </div>
+
+        <p *ngIf="!isLoading && modulos.length === 0" class="empty-message">
+            No hay módulos asignados para tu rol.
+        </p>
+
+    </div>
+
+</nav>
