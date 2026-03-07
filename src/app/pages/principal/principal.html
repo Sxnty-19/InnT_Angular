@@ -4,7 +4,45 @@
     <app-navbar-a></app-navbar-a>
 
     <div class="principal-content">
-        <p>principal works!</p>
+        <section class="main-content">
+
+            <!-- Si hay usuario -->
+            <div *ngIf="nombre_U; else noUser" class="welcome-box">
+
+                <h2 class="title">
+                    ¡Bienvenido(a)! <br>
+                    <span class="highlight">{{ nombre_U }}</span>
+                </h2>
+
+                <div class="tip-box">
+                    <p>
+                        Utiliza la barra de <strong>"Módulos"</strong> (arriba) para navegar
+                        a las distintas secciones del sistema.
+                        Tu rol actual es: <strong>{{ nombre_r }}</strong>.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Si no hay usuario -->
+            <ng-template #noUser>
+
+                <div class="no-user-message">
+
+                    <h2 class="title">Cargando...</h2>
+
+                    <p>
+                        Si esto tarda, por favor
+                        <a routerLink="/login" class="login-link">
+                            inicia sesión
+                        </a>.
+                    </p>
+
+                </div>
+
+            </ng-template>
+
+        </section>
     </div>
 
     <app-footer></app-footer>
