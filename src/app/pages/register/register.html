@@ -1,66 +1,185 @@
-<section class="form-section">
+<section class="register-section">
 
-    <div class="form-card">
+  <!-- Panel izquierdo: FORMULARIO -->
+  <div class="form-card">
 
-        <h1>Registro</h1>
-
-        <p *ngIf="inlineError" class="inline-error">
-            {{ inlineError }}
-        </p>
-
-        <form (ngSubmit)="registrar()">
-
-            <div class="form-grid">
-
-                <input [(ngModel)]="formData.primer_nombre" name="primer_nombre" placeholder="Primer Nombre" required>
-                <input [(ngModel)]="formData.segundo_nombre" name="segundo_nombre" placeholder="Segundo Nombre">
-
-                <input [(ngModel)]="formData.primer_apellido" name="primer_apellido" placeholder="Primer Apellido"
-                    required>
-                <input [(ngModel)]="formData.segundo_apellido" name="segundo_apellido" placeholder="Segundo Apellido">
-
-                <input [(ngModel)]="formData.telefono" name="telefono" placeholder="Teléfono" required>
-                <input [(ngModel)]="formData.correo" name="correo" type="email" placeholder="Correo" required>
-
-                <input [(ngModel)]="formData.username" name="username" placeholder="Usuario" required>
-
-                <div class="password-wrapper">
-                    <input [type]="passwordVisible ? 'text' : 'password'" [(ngModel)]="formData.password"
-                        name="password" placeholder="Contraseña" required>
-
-                    <button type="button" (click)="togglePassword('password')">
-                        👁
-                    </button>
-                </div>
-
-                <div class="password-wrapper">
-                    <input [type]="confirmPasswordVisible ? 'text' : 'password'" [(ngModel)]="confirmPassword"
-                        name="confirmPassword" placeholder="Confirmar Contraseña" required>
-
-                    <button type="button" (click)="togglePassword('confirm')">
-                        👁
-                    </button>
-                </div>
-
-            </div>
-
-            <br>
-
-            <button type="submit" [disabled]="isLoading">
-                {{ isLoading ? 'Registrando...' : 'Registrar Cuenta' }}
-            </button>
-
-            <button type="button" class="link-btn" (click)="irLogin()">
-                ← Ya tengo cuenta
-            </button>
-
-        </form>
+    <div class="form-header">
+      <span class="form-tag">✦ Nueva cuenta</span>
+      <h1>Crear Registro</h1>
+      <p>Completa tus datos para comenzar</p>
     </div>
 
-    <div *ngIf="showMessage" class="message-modal">
-        <div class="message-content" [class.success]="isSuccess">
-            {{ message }}
+    <!-- Error inline -->
+    <div *ngIf="inlineError" class="inline-error">
+      <span class="error-icon">⚠</span>
+      {{ inlineError }}
+    </div>
+
+    <form (ngSubmit)="registrar()" class="register-form">
+
+      <!-- Sección: Datos personales -->
+      <div class="form-section-label">
+        <span>👤 Datos personales</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Primer Nombre <span class="required">*</span></label>
+          <input
+            [(ngModel)]="formData.primer_nombre"
+            name="primer_nombre"
+            placeholder="Ej: Carlos"
+            required />
         </div>
+
+        <div class="form-group">
+          <label>Segundo Nombre</label>
+          <input
+            [(ngModel)]="formData.segundo_nombre"
+            name="segundo_nombre"
+            placeholder="Opcional" />
+        </div>
+
+        <div class="form-group">
+          <label>Primer Apellido <span class="required">*</span></label>
+          <input
+            [(ngModel)]="formData.primer_apellido"
+            name="primer_apellido"
+            placeholder="Ej: García"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label>Segundo Apellido</label>
+          <input
+            [(ngModel)]="formData.segundo_apellido"
+            name="segundo_apellido"
+            placeholder="Opcional" />
+        </div>
+      </div>
+
+      <!-- Sección: Contacto -->
+      <div class="form-section-label">
+        <span>📞 Contacto</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Teléfono <span class="required">*</span></label>
+          <input
+            [(ngModel)]="formData.telefono"
+            name="telefono"
+            placeholder="Ej: 3001234567"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label>Correo electrónico <span class="required">*</span></label>
+          <input
+            [(ngModel)]="formData.correo"
+            name="correo"
+            type="email"
+            placeholder="correo@ejemplo.com"
+            required />
+        </div>
+      </div>
+
+      <!-- Sección: Credenciales -->
+      <div class="form-section-label">
+        <span>🔐 Credenciales de acceso</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group form-group--full">
+          <label>Usuario <span class="required">*</span></label>
+          <input
+            [(ngModel)]="formData.username"
+            name="username"
+            placeholder="Ej: carlos_garcia"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label>Contraseña <span class="required">*</span></label>
+          <div class="input-wrapper password-wrapper">
+            <input
+              [type]="passwordVisible ? 'text' : 'password'"
+              [(ngModel)]="formData.password"
+              name="password"
+              placeholder="Mínimo 8 caracteres"
+              required />
+            <button type="button" class="toggle-password" (click)="togglePassword('password')">
+              {{ passwordVisible ? '🙈' : '👁' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Confirmar Contraseña <span class="required">*</span></label>
+          <div class="input-wrapper password-wrapper">
+            <input
+              [type]="confirmPasswordVisible ? 'text' : 'password'"
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              placeholder="Repite tu contraseña"
+              required />
+            <button type="button" class="toggle-password" (click)="togglePassword('confirm')">
+              {{ confirmPasswordVisible ? '🙈' : '👁' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón submit -->
+      <button type="submit" class="btn-register" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Registrar Cuenta →</span>
+        <span *ngIf="isLoading" class="loading-spinner">
+          <span class="spinner"></span> Registrando...
+        </span>
+      </button>
+
+      <!-- Link login -->
+      <div class="links">
+        <button type="button" class="link-btn back-link" (click)="irLogin()">
+          ← Ya tengo cuenta, <strong>Iniciar Sesión</strong>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Panel DERECHO decorativo -->
+  <div class="register-side">
+    <div class="register-side-content">
+      <div class="side-logo">
+        <img src="Logo_SS.jpeg" alt="Logo Hospedaje" />
+      </div>
+      <h2>Únete al<br /><em>Hospedaje</em><br />Santandereano</h2>
+      <p>Crea tu cuenta y disfruta de todos los beneficios de reservar con nosotros. Rápido, seguro y sencillo.</p>
+      <div class="side-perks">
+        <div class="perk">
+          <span class="perk-icon">🛎️</span>
+          <span>Reservas en línea 24/7</span>
+        </div>
+        <div class="perk">
+          <span class="perk-icon">📋</span>
+          <span>Historial de estancias</span>
+        </div>
+        <div class="perk">
+          <span class="perk-icon">🔒</span>
+          <span>Datos seguros y protegidos</span>
+        </div>
+      </div>
     </div>
+    <div class="side-dots"></div>
+  </div>
+
+  <!-- Modal de mensaje -->
+  <div *ngIf="showMessage" class="message-modal">
+    <div class="message-content" [class.success]="isSuccess" [class.error]="!isSuccess">
+      <span>{{ isSuccess ? '✅' : '❌' }}</span>
+      {{ message }}
+    </div>
+  </div>
 
 </section>
