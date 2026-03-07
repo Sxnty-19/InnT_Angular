@@ -43,9 +43,7 @@ export class NavbarA {
         this.isLoading = false;
         this.cd.detectChanges();
       }
-
     });
-
   }
 
   toggleMenu(): void {
@@ -59,6 +57,5 @@ export class NavbarA {
     if (window.matchMedia('(max-width:768px)').matches) {
       this.isMenuOpen = false;
     }
-
   }
 }

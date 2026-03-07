@@ -16,8 +16,7 @@ export class Navbar implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    this.fullName = localStorage.getItem('nombre')
-      || 'Acceso Denegado (PERMISOS BLOQUEADOS)';
+    this.fullName = localStorage.getItem('nombre') || 'Acceso Denegado (PERMISOS BLOQUEADOS)';
   }
 
   irPrincipal(): void {

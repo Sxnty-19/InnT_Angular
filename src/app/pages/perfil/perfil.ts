@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
 import { Footer } from '../../components/footer/footer';
@@ -13,19 +13,23 @@ import { Usuario } from '../../services/usuario';
   styleUrl: './perfil.css',
 })
 export class Perfil {
+
   perfilForm!: FormGroup;
-  passwordActual = "";
+  usuarioActual: any;
 
   constructor(
     private fb: FormBuilder,
-    private Usuario: Usuario
+    private usuarioService: Usuario,
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
 
     this.perfilForm = this.fb.group({
       primer_nombre: ['', Validators.required],
+      segundo_nombre: [''],
       primer_apellido: ['', Validators.required],
+      segundo_apellido: [''],
       username: ['', Validators.required],
       correo: [''],
       telefono: [''],
@@ -33,23 +37,26 @@ export class Perfil {
     });
 
     this.cargarDatosUsuario();
+
   }
 
   cargarDatosUsuario() {
 
-    this.Usuario.getUsuarioToken().subscribe((res: any) => {
+    this.usuarioService.getUsuarioToken().subscribe((res: any) => {
 
       const user = res.data;
 
-      this.perfilForm.patchValue({
-        primer_nombre: user.primer_nombre,
-        primer_apellido: user.primer_apellido,
-        username: user.username,
-        correo: user.correo,
-        telefono: user.telefono
-      });
+      this.usuarioActual = user;
 
-      this.passwordActual = user.password;
+      this.perfilForm.patchValue({
+        primer_nombre: user[2],
+        segundo_nombre: user[3],
+        primer_apellido: user[4],
+        segundo_apellido: user[5],
+        telefono: user[6],
+        correo: user[7],
+        username: user[8]
+      });
 
     });
 
@@ -57,23 +64,34 @@ export class Perfil {
 
   actualizarUsuario() {
 
-    let data = this.perfilForm.value;
+    const data = {
+      ...this.usuarioActual,
+      ...this.perfilForm.value
+    };
 
     if (!data.password) {
-      data.password = this.passwordActual;
+      data.password = this.usuarioActual[9];
     }
 
-    this.Usuario.updateUsuario(data).subscribe({
+    this.usuarioService.updateUsuario(data).subscribe({
 
-      next: (res) => {
-        alert("Usuario actualizado correctamente")
+      next: () => {
+
+        alert("Usuario actualizado correctamente: Algunos cambios pueden requerir que vuelvas a iniciar sesión.");
+
+        // limpiar campo contraseña
+        this.perfilForm.patchValue({
+          password: ''
+        });
+
       },
 
       error: (err) => {
-        console.error(err)
+        console.error(err);
       }
 
     });
 
   }
+
 }

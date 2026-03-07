@@ -1,10 +1,12 @@
 <app-navbar></app-navbar>
 <app-navbar-a></app-navbar-a>
 
+<h1>Perfil</h1>
+
 <div class="principal-content">
 
-    <h1>Perfil</h1>
     <h3>Editar Cuenta</h3>
+    <h5>Los campos marcados con * son obligatorios</h5>
 
     <form [formGroup]="perfilForm" (ngSubmit)="actualizarUsuario()">
 
@@ -14,8 +16,18 @@
         </div>
 
         <div>
+            <label>Segundo Nombre</label>
+            <input type="text" formControlName="segundo_nombre">
+        </div>
+
+        <div>
             <label>Primer Apellido *</label>
             <input type="text" formControlName="primer_apellido">
+        </div>
+
+        <div>
+            <label>Segundo Apellido</label>
+            <input type="text" formControlName="segundo_apellido">
         </div>
 
         <div>
@@ -43,6 +55,96 @@
         </button>
 
     </form>
+
+</div>
+
+
+<!-- SECCIÓN DOCUMENTOS -->
+
+<div class="principal-content">
+
+    <h2>Documentos</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Número</th>
+                <th>Lugar de Expedición</th>
+                <th>Foto</th>
+                <th>Aprobado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <!-- luego aquí iría el *ngFor -->
+
+            <tr>
+                <td>Cédula</td>
+                <td>123456789</td>
+                <td>Barranquilla</td>
+                <td>foto.jpg</td>
+                <td>Si</td>
+                <td>
+                    <button>Ver</button>
+                    <button>Eliminar</button>
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    <br>
+
+    <button>
+        Agregar nuevo
+    </button>
+
+
+    <!-- FORMULARIO NUEVO DOCUMENTO -->
+
+    <div class="form-documento">
+
+        <h3>Agregar Documento</h3>
+
+        <form>
+
+            <div>
+                <label>Tipo</label>
+                <select>
+                    <option value="">Seleccione</option>
+                    <option>Cédula</option>
+                    <option>Pasaporte</option>
+                    <option>Licencia</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Número</label>
+                <input type="text">
+            </div>
+
+            <div>
+                <label>Lugar de Expedición</label>
+                <input type="text">
+            </div>
+
+            <div>
+                <label>Agregar Foto</label>
+                <input type="file">
+            </div>
+
+            <button type="submit">
+                Agregar
+            </button>
+
+        </form>
+
+    </div>
 
 </div>
 
