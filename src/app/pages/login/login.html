@@ -1,74 +1,126 @@
-<section class="form-section">
+<section class="login-section">
 
+  <!-- Panel izquierdo decorativo -->
+  <div class="login-side">
+    <div class="login-side-content">
+      <div class="side-logo">
+        <img src="Logo_SS.jpeg" alt="Logo Hospedaje" />
+      </div>
+      <h2>Hospedaje<br /><em>Santandereano</em><br />del Sur</h2>
+      <p>Tu hogar en el corazón de Santander. Accede para gestionar tu reserva o descubrir nuestras habitaciones.</p>
+      <div class="side-stats">
+        <div class="side-stat">
+          <span class="side-stat-number">15+</span>
+          <span class="side-stat-label">Años de experiencia</span>
+        </div>
+        <div class="side-stat">
+          <span class="side-stat-number">500+</span>
+          <span class="side-stat-label">Huéspedes felices</span>
+        </div>
+      </div>
+    </div>
+    <div class="side-dots"></div>
+  </div>
+
+  <!-- Panel derecho: formulario -->
   <div class="form-card">
 
-    <h1>Iniciar Sesión</h1>
+    <div class="form-header">
+      <span class="form-tag">✦ Bienvenido</span>
+      <h1>Iniciar Sesión</h1>
+      <p>Ingresa tus credenciales para continuar</p>
+    </div>
 
-    <p *ngIf="inlineError" class="inline-error">
+    <!-- Error inline -->
+    <div *ngIf="inlineError" class="inline-error">
+      <span class="error-icon">⚠</span>
       {{ inlineError }}
-    </p>
+    </div>
 
-    <form (ngSubmit)="login()" #loginForm="ngForm">
+    <form (ngSubmit)="login()" #loginForm="ngForm" class="login-form">
 
+      <!-- Usuario -->
       <div class="form-group">
-        <label>Usuario</label>
-        <input
-          type="text"
-          name="username"
-          [(ngModel)]="username"
-          required
-          [disabled]="isLoading">
+        <label for="username">Usuario</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input
+            id="username"
+            type="text"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="Tu nombre de usuario"
+            required
+            [disabled]="isLoading" />
+        </div>
       </div>
 
+      <!-- Contraseña -->
       <div class="form-group">
-        <label>Contraseña</label>
-
-        <div class="password-wrapper">
+        <label for="password">Contraseña</label>
+        <div class="input-wrapper password-wrapper">
+          <span class="input-icon">🔒</span>
           <input
+            id="password"
             [type]="passwordVisible ? 'text' : 'password'"
             name="password"
             [(ngModel)]="password"
+            placeholder="Tu contraseña"
             required
-            [disabled]="isLoading">
-
+            [disabled]="isLoading" />
           <button
             type="button"
-            (click)="togglePasswordVisibility()">
-            👁
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+            [title]="passwordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            {{ passwordVisible ? '🙈' : '👁' }}
           </button>
         </div>
-
-        <button
-          type="button"
-          class="link-btn"
-          (click)="recuperarPassword()">
+        <!-- ¿Olvidaste tu contraseña? DEBAJO del input -->
+        <button type="button" class="link-btn forgot-btn" (click)="recuperarPassword()">
           ¿Olvidaste tu contraseña?
         </button>
       </div>
 
-      <button
-        type="submit"
-        class="btn-login"
-        [disabled]="isLoading">
-        {{ isLoading ? 'Cargando...' : 'Ingresar' }}
+      <!-- Botón submit -->
+      <button type="submit" class="btn-login" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Ingresar →</span>
+        <span *ngIf="isLoading" class="loading-spinner">
+          <span class="spinner"></span> Cargando...
+        </span>
       </button>
 
-      <div class="links">
-        <button type="button" (click)="irRegistro()" class="link-btn">
-          ¿No tienes cuenta? Regístrate
-        </button>
+      <!-- Divisor -->
+      <div class="divider">
+        <span>o continúa con</span>
+      </div>
 
-        <button type="button" (click)="volverInicio()" class="link-btn">
+      <!-- Botón Azure -->
+      <button type="button" class="btn-azure">
+        <svg class="azure-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.5 0L0 6.5v11L11.5 24 23 17.5v-11L11.5 0zm0 2.2l9.3 5.3v10.6l-9.3 5.3-9.3-5.3V7.5l9.3-5.3z" fill="#0078d4"/>
+          <path d="M11.5 4.8L4.2 9v8.4l7.3 4.2 7.3-4.2V9l-7.3-4.2zm0 2.2l5.1 2.9v5.8l-5.1 2.9-5.1-2.9V9.9l5.1-2.9z" fill="#0078d4" opacity="0.6"/>
+        </svg>
+        Iniciar sesión con Microsoft Azure
+      </button>
+
+      <!-- Links -->
+      <div class="links">
+        <button type="button" (click)="irRegistro()" class="link-btn register-link">
+          ¿No tienes cuenta? <strong>Regístrate</strong>
+        </button>
+        <button type="button" (click)="volverInicio()" class="link-btn back-link">
           ← Volver al inicio
         </button>
       </div>
 
     </form>
-
   </div>
 
+  <!-- Modal de mensaje -->
   <div *ngIf="showMessage" class="message-modal">
-    <div class="message-content" [class.success]="isSuccess">
+    <div class="message-content" [class.success]="isSuccess" [class.error]="!isSuccess">
+      <span>{{ isSuccess ? '✅' : '❌' }}</span>
       {{ message }}
     </div>
   </div>
