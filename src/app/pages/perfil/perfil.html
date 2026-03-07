@@ -1,1 +1,49 @@
-<p>perfil works!</p>
+<app-navbar></app-navbar>
+<app-navbar-a></app-navbar-a>
+
+<div class="principal-content">
+
+    <h1>Perfil</h1>
+    <h3>Editar Cuenta</h3>
+
+    <form [formGroup]="perfilForm" (ngSubmit)="actualizarUsuario()">
+
+        <div>
+            <label>Primer Nombre *</label>
+            <input type="text" formControlName="primer_nombre">
+        </div>
+
+        <div>
+            <label>Primer Apellido *</label>
+            <input type="text" formControlName="primer_apellido">
+        </div>
+
+        <div>
+            <label>Username *</label>
+            <input type="text" formControlName="username">
+        </div>
+
+        <div>
+            <label>Correo</label>
+            <input type="email" formControlName="correo">
+        </div>
+
+        <div>
+            <label>Teléfono</label>
+            <input type="text" formControlName="telefono">
+        </div>
+
+        <div>
+            <label>Nueva contraseña</label>
+            <input type="password" formControlName="password" placeholder="Dejar vacío para mantener la actual">
+        </div>
+
+        <button type="submit" [disabled]="perfilForm.invalid">
+            Actualizar
+        </button>
+
+    </form>
+
+</div>
+
+<app-footer></app-footer>
