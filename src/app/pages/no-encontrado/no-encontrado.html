@@ -1,1 +1,52 @@
-<p>no-encontrado works!</p>
+<section class="not-found">
+  <div class="not-found-bg-dots"></div>
+
+  <div class="not-found-content">
+
+    <!-- Número 404 grande -->
+    <div class="error-number">
+      <span class="digit">4</span>
+      <span class="digit zero">
+        <img src="Logo_SS.jpeg" alt="Logo" />
+      </span>
+      <span class="digit">4</span>
+    </div>
+
+    <div class="error-divider"></div>
+
+    <span class="error-tag">✦ Página no encontrada</span>
+    <h1>¡Ups! Te perdiste</h1>
+    <p>La habitación que buscas no existe o fue trasladada.<br />
+      Pero no te preocupes, tenemos muchas más esperándote.</p>
+
+    <!-- Acciones -->
+    <div class="not-found-actions">
+      <a routerLink="/" class="btn btn-primary-nf">
+        🏠 Volver al inicio
+      </a>
+      <a routerLink="/login" class="btn btn-outline-nf">
+        Iniciar Sesión
+      </a>
+    </div>
+
+    <!-- Sugerencias -->
+    <div class="suggestions">
+      <p class="suggestions-title">¿Qué puedes hacer?</p>
+      <div class="suggestions-grid">
+        <a routerLink="/" class="suggestion-card">
+          <span class="suggestion-icon">🏠</span>
+          <span>Ir al inicio</span>
+        </a>
+        <a routerLink="/login" class="suggestion-card">
+          <span class="suggestion-icon">🔑</span>
+          <span>Iniciar sesión</span>
+        </a>
+        <a routerLink="/register" class="suggestion-card">
+          <span class="suggestion-icon">📝</span>
+          <span>Registrarse</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
