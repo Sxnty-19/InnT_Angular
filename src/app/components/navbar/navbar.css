@@ -1,93 +1,268 @@
+/* ================================== */
+/* NAVBAR PRINCIPAL (autenticado)     */
+/* ================================== */
 .navbar {
-  width: 100%;
-  background-color: #1e3a8a; /* azul oscuro */
-  color: white;
+  background: var(--color-dark);
+  padding: 0 50px;
+  height: 68px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  position: sticky;
+  position: fixed;
+  width: 100%;
+  left: 0;
   top: 0;
-  z-index: 50;
-  font-family: Arial, sans-serif;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  border-bottom: 1px solid rgba(252, 211, 77, 0.1);
+  backdrop-filter: blur(8px);
 }
 
+/* ================================== */
+/* LADO IZQUIERDO — LOGO + MARCA      */
+/* ================================== */
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   cursor: pointer;
+  user-select: none;
+  outline: none;
+  transition: opacity 0.2s;
 }
 
-.nav-left:focus {
-  outline: 2px solid #fcd34d;
-  outline-offset: 2px;
+.nav-left:hover { opacity: 0.88; }
+.nav-left:active { opacity: 0.7; }
+
+/* Foco accesible */
+.nav-left:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 4px;
+  border-radius: 8px;
 }
 
 .logo {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid rgba(252, 211, 77, 0.35);
+  transition: border-color 0.3s, transform 0.3s;
+  flex-shrink: 0;
+}
+
+.nav-left:hover .logo {
+  border-color: var(--color-secondary);
+  transform: scale(1.05) rotate(-2deg);
 }
 
 .brand {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #fcd34d;
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-light);
+  letter-spacing: 0.3px;
+  line-height: 1.3;
+  max-width: 280px;
+  transition: color 0.3s;
 }
 
+.nav-left:hover .brand {
+  color: var(--color-secondary);
+}
+
+/* ================================== */
+/* LADO DERECHO — USUARIO + BOTONES   */
+/* ================================== */
 .nav-right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+/* Info del usuario */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px 6px 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50px;
+  transition: background 0.3s;
+}
+
+.user-info:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Avatar con inicial del nombre */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.85rem;
+  font-family: 'Georgia', serif;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(252, 211, 77, 0.3);
+}
+
 .user-name {
+  font-size: 0.88rem;
   font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.2px;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* Separador vertical */
+.nav-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 4px;
+}
+
+/* ================================== */
+/* BOTONES DEL NAV                    */
+/* ================================== */
 .nav-btn {
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 1px solid #fcd34d;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: 1.5px solid transparent;
   background: transparent;
-  color: #fcd34d;
-  cursor: pointer;
-  font-size: 0.9rem;
+  color: var(--color-text);
+  font-size: 0.85rem;
   font-weight: 600;
-  transition: 0.3s;
+  font-family: 'Georgia', serif;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
-.nav-btn:hover {
-  background-color: #fcd34d;
-  color: #1e3a8a;
+.btn-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
 }
 
-.logout {
-  border-color: #ef4444;
-  color: #ef4444;
+/* Editar perfil */
+.nav-btn:not(.logout):hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-light);
 }
 
-.logout:hover {
-  background-color: #ef4444;
-  color: white;
+.nav-btn:not(.logout):hover .btn-icon {
+  transform: rotate(-8deg);
 }
 
+/* Cerrar sesión */
+.nav-btn.logout {
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.nav-btn.logout:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.nav-btn.logout:hover .btn-icon {
+  transform: translateX(3px);
+}
+
+/* ================================== */
+/* RESPONSIVE — 992px                 */
+/* ================================== */
+@media (max-width: 992px) {
+  .navbar {
+    padding: 0 24px;
+  }
+
+  .brand {
+    font-size: 0.92rem;
+    max-width: 200px;
+  }
+}
+
+/* ================================== */
+/* RESPONSIVE — 768px (Móvil)         */
+/* ================================== */
 @media (max-width: 768px) {
-  .desktop-text, .user-name.desktop-only {
+  .navbar {
+    padding: 0 16px;
+    height: 62px;
+  }
+
+  .brand {
+    font-size: 0.82rem;
+    max-width: 140px;
+  }
+
+  .logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Ocultar textos en móvil, dejar solo íconos */
+  .desktop-text,
+  .desktop-only {
     display: none;
   }
-  .mobile-text {
-    display: inline;
-  }
-  .navbar {
-    padding: 8px 12px;
-  }
-  .brand {
-    font-size: 1rem;
-  }
+
+  /* Botones solo con ícono en móvil */
   .nav-btn {
-    padding: 5px 10px;
-    font-size: 0.8rem;
+    padding: 8px 10px;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    justify-content: center;
+  }
+
+  .btn-icon {
+    width: 17px;
+    height: 17px;
+  }
+
+  /* Avatar sin texto */
+  .user-info {
+    padding: 4px;
+    border-radius: 50%;
+  }
+
+  .nav-divider {
+    display: none;
+  }
+
+  .nav-right {
+    gap: 6px;
+  }
+}
+
+/* ================================== */
+/* RESPONSIVE — 480px                 */
+/* ================================== */
+@media (max-width: 480px) {
+  .brand {
+    display: none;
+  }
+
+  .nav-left {
+    gap: 0;
   }
 }

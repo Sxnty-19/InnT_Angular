@@ -1,69 +1,174 @@
+/* ================================== */
+/* MOD-NAV — BARRA DE MÓDULOS         */
+/* ================================== */
 .mod-nav {
+  position: fixed;
+  top: 68px;
+  left: 0;
   width: 100%;
-  background: #2c3e50;
-  padding: 8px 0;
+  z-index: 999;
+  background: var(--color-dark);
+  /* Sin border ni sombra fuerte — se funde con el navbar */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .nav-wrapper {
-  max-width: 1200px;
-  margin: auto;
-  padding: 0 15px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 50px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Módulos centrados */
 }
 
-.menu-toggle-btn {
-  background: #34495e;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-
+/* ================================== */
+/* BOTONES DE MÓDULOS                 */
+/* ================================== */
 .mod-buttons-container {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   flex-wrap: wrap;
+  padding: 5px 0;
+  width: 100%;
 }
 
 .mod-btn {
-  background: #3498db;
-  color: white;
+  position: relative;
+  background: transparent;
+  color: rgba(226, 232, 240, 0.55);
   border: none;
-  padding: 7px 14px;
+  padding: 6px 16px;
   border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: 'Georgia', serif;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.mod-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 2px;
+  background: var(--color-secondary);
+  border-radius: 2px;
+  transition: transform 0.22s ease;
 }
 
 .mod-btn:hover {
-  background: #2980b9;
+  color: var(--color-light);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.error {
-  color: red;
+.mod-btn:hover::after {
+  transform: translateX(-50%) scaleX(1);
 }
 
-.empty-message {
-  color: white;
+.mod-btn.active {
+  color: var(--color-secondary);
 }
 
+.mod-btn.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.mod-btn:active {
+  transform: scale(0.97);
+}
+
+/* ================================== */
+/* BARRA DE CARGA                     */
+/* ================================== */
 .loading-bar-container {
   width: 100%;
-  background: #ddd;
-  height: 4px;
-  border-radius: 4px;
+  height: 2px;
+  background: transparent;
   overflow: hidden;
 }
 
 .loading-bar {
-  width: 40%;
   height: 100%;
-  background: #3498db;
-  animation: loading 1s infinite;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, rgba(252, 211, 77, 0.5), transparent);
+  animation: loadingSlide 1.2s ease-in-out infinite;
 }
 
-@keyframes loading {
-  0% { margin-left: -40% }
-  100% { margin-left: 100% }
+@keyframes loadingSlide {
+  0%   { transform: translateX(-150%); }
+  100% { transform: translateX(400%); }
+}
+
+/* ================================== */
+/* MENSAJES                           */
+/* ================================== */
+.mod-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f87171;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 8px 0;
+}
+
+.empty-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(226, 232, 240, 0.3);
+  font-size: 0.8rem;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+/* ================================== */
+/* RESPONSIVE — 992px                 */
+/* ================================== */
+@media (max-width: 992px) {
+  .nav-wrapper {
+    padding: 0 20px;
+  }
+}
+
+/* ================================== */
+/* RESPONSIVE — 768px                 */
+/* ================================== */
+@media (max-width: 768px) {
+  .mod-nav {
+    top: 62px;
+  }
+
+  .nav-wrapper {
+    padding: 0 8px;
+    overflow-x: auto;
+    justify-content: flex-start;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .nav-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mod-buttons-container {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding: 5px 0;
+    gap: 0;
+  }
+
+  .mod-btn {
+    font-size: 0.78rem;
+    padding: 6px 12px;
+    flex-shrink: 0;
+  }
 }
