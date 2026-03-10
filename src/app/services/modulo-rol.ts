@@ -13,6 +13,6 @@ export class ModuloRol {
 
   getModulos(): Observable<any> {
     const headers = new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.get(`${this.apiUrl}/r-modulos-rol`, { headers });
+    return this.http.get(`${this.apiUrl}/rol/`, { headers });
   }
 }
