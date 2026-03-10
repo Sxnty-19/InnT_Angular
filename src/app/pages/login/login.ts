@@ -61,6 +61,7 @@ export class Login {
     this.showMessage = true;
 
     localStorage.setItem('nombre', data.user.nombre);
+    localStorage.setItem('id_usuario', data.user.id_usuario);
     localStorage.setItem('rol', data.user.rol);
     localStorage.setItem('id_rol', data.user.id_rol);
     localStorage.setItem('token', data.access_token);
