@@ -1,1 +1,181 @@
-<p>c-solicitar works!</p>
+<app-navbar></app-navbar>
+<app-navbar-a></app-navbar-a>
+
+<div class="solicitar-container">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-bg-dots"></div>
+    <div class="page-header-content">
+      <div class="page-header-left">
+        <span class="page-tag">✦ Servicios</span>
+        <h1>Gestión de <em>Solicitudes</em></h1>
+        <p>Crea peticiones de servicio y consulta el estado de tus solicitudes.</p>
+      </div>
+      <div class="page-header-right">
+        <div class="header-stat">
+          <span class="header-stat-icon">🔔</span>
+          <div>
+            <strong>{{ notificaciones.length }} solicitud(es)</strong>
+            <span>registradas en el sistema</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="solicitar-body">
+
+    <!-- TABS -->
+    <div class="tabs-nav">
+      <button class="tab-btn" [class.active]="activeView === 'create'" (click)="activeView = 'create'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14"/><path d="M5 12h14"/>
+        </svg>
+        Crear Solicitud
+      </button>
+      <button class="tab-btn" [class.active]="activeView === 'history'" (click)="activeView = 'history'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+        </svg>
+        Ver Historial y Estado
+      </button>
+    </div>
+
+    <!-- ========================== -->
+    <!-- TAB 1: CREAR SOLICITUD     -->
+    <!-- ========================== -->
+    <div class="tab-content" *ngIf="activeView === 'create'">
+      <div class="perfil-card card-create">
+
+        <div class="card-header">
+          <div class="card-header-icon">📝</div>
+          <div>
+            <h3>Nueva Petición de Servicio</h3>
+            <p>Completa los campos para enviar tu solicitud al equipo.</p>
+          </div>
+        </div>
+
+        <div class="create-form">
+
+          <div class="form-group">
+            <label for="num-hab">Número de habitación</label>
+            <input
+              id="num-hab"
+              type="number"
+              min="1"
+              [(ngModel)]="numero_habitacion"
+              placeholder="Ej: 305" />
+          </div>
+
+          <div class="form-group">
+            <label for="desc">Descripción de la solicitud</label>
+            <textarea
+              id="desc"
+              [(ngModel)]="descripcion"
+              placeholder="Ej: Necesitamos toallas extra y un tazón de frutas."
+              rows="4">
+            </textarea>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-crear" (click)="crearNotificacion()" [disabled]="isSubmitting">
+              <span class="btn-spinner" *ngIf="isSubmitting"></span>
+              <svg *ngIf="!isSubmitting" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+              {{ isSubmitting ? 'Enviando...' : 'Enviar Solicitud' }}
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================== -->
+    <!-- TAB 2: HISTORIAL           -->
+    <!-- ========================== -->
+    <div class="tab-content" *ngIf="activeView === 'history'">
+      <div class="perfil-card">
+
+        <div class="card-header">
+          <div class="card-header-icon">📋</div>
+          <div>
+            <h3>Historial de Solicitudes</h3>
+            <p>Estado actualizado de todas las peticiones registradas.</p>
+          </div>
+        </div>
+
+        <!-- Loading bar -->
+        <div class="loading-bar-wrap" *ngIf="loading">
+          <div class="loading-bar"></div>
+        </div>
+
+        <!-- Error -->
+        <div class="empty-state" *ngIf="!loading && error && notificaciones.length === 0">
+          <span class="empty-icon">⚠️</span>
+          <h4>{{ error }}</h4>
+          <p>Intenta recargar la página o comunícate con el soporte.</p>
+        </div>
+
+        <!-- Sin notificaciones -->
+        <div class="empty-state" *ngIf="!loading && !error && notificaciones.length === 0">
+          <span class="empty-icon">📭</span>
+          <h4>Sin solicitudes registradas</h4>
+          <p>No hay notificaciones en el sistema en este momento.</p>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-wrapper" *ngIf="!loading && notificaciones.length > 0">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th class="col-id">ID</th>
+                <th class="col-user">Usuario</th>
+                <th>Habitación</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let n of notificaciones" [class.row-activa]="n.estado === 1">
+                <td class="td-id col-id">#{{ n.id_notificacion }}</td>
+                <td class="col-user">{{ n.id_usuario }}</td>
+                <td class="td-hab">{{ n.id_habitacion }}</td>
+                <td class="td-desc">{{ n.descripcion }}</td>
+                <td>
+                  <span class="badge-estado activo" *ngIf="n.estado === 1">✔ Activa</span>
+                  <span class="badge-estado cerrado" *ngIf="n.estado !== 1">✖ Cerrada</span>
+                </td>
+                <td>{{ n.date_created.substring(0, 10) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>
+
+<!-- TOAST FLOTANTE -->
+<div class="notification-toast"
+     *ngIf="showMessage"
+     [class.success]="isSuccess"
+     [class.error]="!isSuccess"
+     [class.slide-in]="isModalActive"
+     [class.fade-out]="!isModalActive">
+  <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
+  <p>{{ message }}</p>
+</div>
