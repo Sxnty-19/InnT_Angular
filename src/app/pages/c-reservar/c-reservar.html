@@ -3,9 +3,7 @@
 
 <div class="reservas-container">
 
-  <!-- ============================= -->
-  <!-- PAGE HEADER                   -->
-  <!-- ============================= -->
+  <!-- PAGE HEADER -->
   <div class="page-header">
     <div class="page-header-bg-dots"></div>
     <div class="page-header-content">
@@ -25,4 +23,276 @@
       </div>
     </div>
   </div>
-  <app-footer></app-footer>
+
+  <div class="reservas-body">
+
+    <!-- TABS -->
+    <div class="tabs-nav">
+      <button class="tab-btn" [class.active]="activeTab === 'crear'" (click)="activeTab = 'crear'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Crear Reserva
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'activas'" (click)="activeTab = 'activas'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+          <polyline points="9 16 11 18 15 14"/>
+        </svg>
+        Reservas Activas
+        <span class="tab-badge" *ngIf="reservasActivas.length > 0">{{ reservasActivas.length }}</span>
+      </button>
+    </div>
+
+    <!-- ============================= -->
+    <!-- TAB 1: CREAR RESERVA          -->
+    <!-- ============================= -->
+    <div class="tab-content" *ngIf="activeTab === 'crear'">
+      <div class="perfil-card">
+
+        <div class="card-header">
+          <div class="card-header-icon">📅</div>
+          <div>
+            <h3>Nueva Reserva</h3>
+            <p>Selecciona fechas y elige las habitaciones disponibles.</p>
+          </div>
+        </div>
+
+        <!-- DOS COLUMNAS -->
+        <div class="two-col-layout">
+
+          <!-- COLUMNA 1: BÚSQUEDA Y DISPONIBLES -->
+          <div class="col-box col-search">
+            <div class="col-box-header">
+              <span class="step-pill">Paso 1</span>
+              <h4>Buscar Disponibilidad</h4>
+            </div>
+
+            <!-- Fechas -->
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="date-start">Fecha de inicio</label>
+                <input id="date-start" type="date" [(ngModel)]="date_start" />
+              </div>
+              <div class="form-group">
+                <label for="date-end">Fecha de fin</label>
+                <input id="date-end" type="date" [(ngModel)]="date_end" />
+              </div>
+            </div>
+
+            <!-- Botón buscar -->
+            <button class="btn-search" (click)="buscarHabitaciones()" [disabled]="isLoading">
+              <span class="btn-spinner" *ngIf="isLoading"></span>
+              <svg *ngIf="!isLoading" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              {{ isLoading ? 'Buscando...' : 'Buscar Habitaciones' }}
+            </button>
+
+            <!-- Lista habitaciones disponibles -->
+            <div class="room-section">
+              <div class="room-section-header">
+                <h5>Habitaciones disponibles</h5>
+                <span class="room-count">{{ availRooms.length }}</span>
+              </div>
+
+              <div class="room-empty" *ngIf="availRooms.length === 0">
+                <span>🔍</span>
+                <p>{{ (!date_start || !date_end) ? 'Ingresa las fechas para buscar.' : 'No hay habitaciones disponibles para el periodo seleccionado.' }}</p>
+              </div>
+
+              <ul class="room-list" *ngIf="availRooms.length > 0">
+                <li class="room-item" *ngFor="let hab of availRooms">
+                  <div class="room-item-info">
+                    <span class="room-icon">🛏️</span>
+                    <div>
+                      <span class="room-name">{{ hab.nombre }}</span>
+                      <span class="room-id">ID: {{ hab.id }}</span>
+                    </div>
+                  </div>
+                  <button
+                    class="btn-agregar"
+                    (click)="agregarHab(hab.id)"
+                    [disabled]="isSelected(hab.id)"
+                    [class.added]="isSelected(hab.id)">
+                    {{ isSelected(hab.id) ? '✔ Agregada' : '+ Agregar' }}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- COLUMNA 2: SELECCIONADAS Y CONFIRMACIÓN -->
+          <div class="col-box col-summary">
+            <div class="col-box-header">
+              <span class="step-pill step-pill--gold">Paso 2</span>
+              <h4>Confirmar Reserva</h4>
+            </div>
+
+            <!-- Lista habitaciones seleccionadas -->
+            <div class="room-section">
+              <div class="room-section-header">
+                <h5>Habitaciones seleccionadas</h5>
+                <span class="room-count room-count--gold">{{ selectedRooms.length }}</span>
+              </div>
+
+              <div class="room-empty" *ngIf="selectedRooms.length === 0">
+                <span>➕</span>
+                <p>Añade habitaciones desde la búsqueda.</p>
+              </div>
+
+              <ul class="room-list" *ngIf="selectedRooms.length > 0">
+                <li class="room-item room-item--selected" *ngFor="let s of selectedRooms">
+                  <div class="room-item-info">
+                    <span class="room-icon">✅</span>
+                    <div>
+                      <span class="room-name">{{ s.nombre }}</span>
+                      <span class="room-id">ID: {{ s.id }}</span>
+                    </div>
+                  </div>
+                  <button class="btn-quitar" (click)="quitarHab(s.id)">✕ Quitar</button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Resumen de fechas -->
+            <div class="summary-box">
+              <div class="summary-row">
+                <span class="summary-label">📅 Entrada</span>
+                <span class="summary-value">{{ date_start || '—' }}</span>
+              </div>
+              <div class="summary-divider"></div>
+              <div class="summary-row">
+                <span class="summary-label">📅 Salida</span>
+                <span class="summary-value">{{ date_end || '—' }}</span>
+              </div>
+              <div class="summary-divider"></div>
+              <div class="summary-row">
+                <span class="summary-label">🛏️ Habitaciones</span>
+                <span class="summary-value summary-value--accent">{{ selectedRooms.length }}</span>
+              </div>
+            </div>
+
+            <!-- Botón confirmar -->
+            <button
+              class="btn-confirm"
+              (click)="confirmarReserva()"
+              [disabled]="selectedRooms.length === 0 || isLoading">
+              <span class="btn-spinner btn-spinner--light" *ngIf="isLoading"></span>
+              <svg *ngIf="!isLoading" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              {{ isLoading ? 'Procesando...' : 'Confirmar Reserva (' + selectedRooms.length + ')' }}
+            </button>
+          </div>
+
+        </div><!-- /two-col-layout -->
+      </div>
+    </div><!-- /tab crear -->
+
+    <!-- ============================= -->
+    <!-- TAB 2: RESERVAS ACTIVAS       -->
+    <!-- ============================= -->
+    <div class="tab-content" *ngIf="activeTab === 'activas'">
+      <div class="perfil-card">
+
+        <div class="card-header">
+          <div class="card-header-icon">📋</div>
+          <div>
+            <h3>Reservas Activas</h3>
+            <p>Consulta y gestiona tus reservas vigentes.</p>
+          </div>
+        </div>
+
+        <!-- Sin reservas -->
+        <div class="empty-state" *ngIf="reservasActivas.length === 0">
+          <span class="empty-icon">📭</span>
+          <h4>Sin reservas activas</h4>
+          <p>No tienes reservas activas registradas. ¡Crea una nueva!</p>
+          <button class="btn-go-crear" (click)="activeTab = 'crear'">Crear una reserva</button>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-wrapper" *ngIf="reservasActivas.length > 0">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>ID Reserva</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of reservasActivas">
+                <td class="td-id">#{{ r.id_reserva }}</td>
+                <td>{{ r.date_start.substring(0, 10) }}</td>
+                <td>{{ r.date_end.substring(0, 10) }}</td>
+                <td><span class="badge-estado activo">✔ Activa</span></td>
+                <td>
+                  <button class="btn-cancelar"
+                    (click)="showCancelConfirmation(r.id_reserva)"
+                    [disabled]="isLoading">
+                    Cancelar
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div><!-- /tab activas -->
+
+  </div><!-- /reservas-body -->
+</div><!-- /reservas-container -->
+
+<!-- TOAST FLOTANTE -->
+<div class="notification-toast"
+     *ngIf="showMessage"
+     [class.success]="isSuccess"
+     [class.error]="!isSuccess">
+  <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
+  <p>{{ message }}</p>
+  <button class="toast-close" (click)="hideNotification()">✕</button>
+</div>
+
+<!-- MODAL: CONFIRMAR CANCELACIÓN -->
+<div class="modal-backdrop"
+     *ngIf="isConfirmingCancel && reservationToCancel"
+     (click)="cancelConfirmation()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-icon-wrap">⚠️</div>
+    <h3 class="modal-title">Confirmar Cancelación</h3>
+    <p class="modal-body">
+      ¿Estás seguro de que deseas cancelar la reserva
+      <strong>#{{ reservationToCancel?.id_reserva }}</strong>
+      con fecha de inicio
+      <strong>{{ reservationToCancel?.date_start?.substring(0, 10) }}</strong>?
+      <br><br>
+      <span class="modal-warning">Esta acción no se puede deshacer.</span>
+    </p>
+    <div class="modal-actions">
+      <button class="btn-modal-keep" (click)="cancelConfirmation()" [disabled]="isLoading">
+        No, mantener
+      </button>
+      <button class="btn-modal-confirm" (click)="executeCancellation()" [disabled]="isLoading">
+        <span class="btn-spinner btn-spinner--light" *ngIf="isLoading"></span>
+        Sí, cancelar
+      </button>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

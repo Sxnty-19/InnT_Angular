@@ -31,7 +31,7 @@ export class CReservar implements OnInit {
   activeTab: 'crear' | 'activas' = 'crear';
 
   // ========================
-  // Estado de reserva
+  // Lógica de reserva
   // ========================
   date_start = '';
   date_end = '';
@@ -58,6 +58,9 @@ export class CReservar implements OnInit {
 
   private readonly API = 'https://inntech-backend.onrender.com';
 
+  // ========================
+  // ngOnInit — equivale a onMount
+  // ========================
   ngOnInit(): void {
     const userString = localStorage.getItem('user');
     if (userString) {
@@ -103,7 +106,7 @@ export class CReservar implements OnInit {
   }
 
   // ========================
-  // Buscar habitaciones
+  // Buscar habitaciones disponibles
   // ========================
   async buscarHabitaciones(): Promise<void> {
     this.hideNotification();
@@ -145,6 +148,7 @@ export class CReservar implements OnInit {
         this.showNotification(`Se encontraron ${this.availRooms.length} habitaciones disponibles.`, true);
       }
     } catch (e) {
+      console.error(e);
       this.showNotification('No hay conexión con el servidor.', false);
     } finally {
       this.isLoading = false;
@@ -152,7 +156,7 @@ export class CReservar implements OnInit {
   }
 
   // ========================
-  // Selección de habitaciones
+  // Agregar / Quitar habitación
   // ========================
   isSelected(id: number): boolean {
     return this.selectedRooms.some(s => s.id === id);
@@ -161,8 +165,14 @@ export class CReservar implements OnInit {
   agregarHab(id: number): void {
     this.hideNotification();
     const hab = this.availRooms.find(r => r.id === id);
-    if (!hab) { this.showNotification('Habitación no encontrada.', false); return; }
-    if (this.isSelected(id)) { this.showNotification('La habitación ya fue seleccionada.', false); return; }
+    if (!hab) {
+      this.showNotification('Habitación no encontrada.', false);
+      return;
+    }
+    if (this.isSelected(id)) {
+      this.showNotification('La habitación ya fue seleccionada.', false);
+      return;
+    }
     this.selectedRooms = [...this.selectedRooms, hab];
     this.showNotification(`Habitación ${hab.nombre} agregada a la selección.`, true);
   }
@@ -224,6 +234,7 @@ export class CReservar implements OnInit {
       await this.cargarReservas();
 
     } catch (e) {
+      console.error(e);
       this.showNotification('No hay conexión con el servidor al intentar crear la reserva.', false);
     } finally {
       this.isLoading = false;
@@ -233,6 +244,8 @@ export class CReservar implements OnInit {
   // ========================
   // Modal de cancelación
   // ========================
+
+  // Equivale a showCancelConfirmation() — valida regla 24h antes de abrir modal
   showCancelConfirmation(id: number): void {
     this.hideNotification();
 
@@ -243,9 +256,11 @@ export class CReservar implements OnInit {
     }
 
     const diffTime = new Date(reserva.date_start).getTime() - new Date().getTime();
-    if (diffTime < 24 * 60 * 60 * 1000) {
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+
+    if (diffTime < twentyFourHours) {
       this.showNotification(
-        'Esta reserva no se puede cancelar. Debe cancelarse con al menos 24 horas de antelación.',
+        'Esta reserva no se puede cancelar. Debe ser cancelada con al menos 24 horas de antelación.',
         false
       );
       return;
@@ -255,15 +270,18 @@ export class CReservar implements OnInit {
     this.isConfirmingCancel = true;
   }
 
+  // Equivale a executeCancellation() — hace el PUT y recarga reservas
   async executeCancellation(): Promise<void> {
     if (!this.reservationToCancel) return;
 
     this.isLoading = true;
     const id = this.reservationToCancel.id_reserva;
-    this.isConfirmingCancel = false;
+    this.isConfirmingCancel = false; // Cierra modal inmediatamente
 
     try {
-      const res = await fetch(`${this.API}/reservas/cancelar/${id}`, { method: 'PUT' });
+      const res = await fetch(`${this.API}/reservas/cancelar/${id}`, {
+        method: 'PUT',
+      });
       const data = await res.json();
 
       if (!res.ok) {
@@ -282,6 +300,7 @@ export class CReservar implements OnInit {
     }
   }
 
+  // Equivale a cancelConfirmation() — cierra modal sin hacer nada
   cancelConfirmation(): void {
     this.isConfirmingCancel = false;
     this.reservationToCancel = null;
