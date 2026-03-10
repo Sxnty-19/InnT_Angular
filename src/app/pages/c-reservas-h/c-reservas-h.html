@@ -1,1 +1,89 @@
-<p>c-reservas-h works!</p>
+<app-navbar></app-navbar>
+<app-navbar-a></app-navbar-a>
+
+<div class="historial-container">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-bg-dots"></div>
+    <div class="page-header-content">
+      <div class="page-header-left">
+        <span class="page-tag">✦ Mis reservas</span>
+        <h1>Historial de <em>Reservas</em></h1>
+        <p>Consulta todas tus reservas finalizadas y canceladas.</p>
+      </div>
+      <div class="page-header-right">
+        <div class="header-stat">
+          <span class="header-stat-icon">📜</span>
+          <div>
+            <strong>{{ historial.length }} registro(s)</strong>
+            <span>en tu historial</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="historial-body">
+
+    <!-- LOADING BAR -->
+    <div class="loading-bar-wrap" *ngIf="isLoading">
+      <div class="loading-bar"></div>
+    </div>
+
+    <!-- ERROR: sin datos -->
+    <div class="empty-state" *ngIf="!isLoading && historial.length === 0">
+      <span class="empty-icon">📭</span>
+      <h4>{{ error || 'Sin historial disponible' }}</h4>
+      <p>Aún no tienes reservas finalizadas o canceladas registradas.</p>
+    </div>
+
+    <!-- TABLA -->
+    <div class="perfil-card" *ngIf="!isLoading && historial.length > 0">
+
+      <div class="card-header">
+        <div class="card-header-icon">📋</div>
+        <div>
+          <h3>Reservas Anteriores</h3>
+          <p>Listado completo de tu historial de estadías.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="doc-table" [class.fade-in]="isLoaded">
+          <thead>
+            <tr>
+              <th>ID Reserva</th>
+              <th>Fecha Inicio</th>
+              <th>Fecha Fin</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of historial; let i = index"
+                [style.animation-delay]="(i * 0.05) + 's'">
+              <td class="td-id">#{{ item.id_reserva }}</td>
+              <td>{{ item.date_start.substring(0, 10) }}</td>
+              <td>{{ item.date_end.substring(0, 10) }}</td>
+              <td>
+                <span class="badge-estado terminado" *ngIf="item.estado === 'terminada'">
+                  ✔ Terminada
+                </span>
+                <span class="badge-estado cancelado" *ngIf="item.estado === 'cancelada'">
+                  ✖ Cancelada
+                </span>
+                <span class="badge-estado otro" *ngIf="item.estado !== 'terminada' && item.estado !== 'cancelada'">
+                  {{ item.estado }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>

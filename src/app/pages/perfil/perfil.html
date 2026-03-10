@@ -1,129 +1,208 @@
 <app-navbar></app-navbar>
 <app-navbar-a></app-navbar-a>
 
-<h1>Perfil</h1>
+<div class="perfil-container">
 
-<div class="principal-content">
+  <!-- ============================= -->
+  <!-- PAGE HEADER                   -->
+  <!-- ============================= -->
+  <div class="page-header">
+    <div class="page-header-bg-dots"></div>
+    <div class="page-header-content">
+      <div class="page-header-left">
+        <span class="page-tag">✦ Mi cuenta</span>
+        <h1>Editar <em>Perfil</em></h1>
+        <p>Mantén tus datos actualizados para una mejor experiencia.</p>
+      </div>
+      <div class="page-header-right">
+        <div class="header-stat">
+          <span class="header-stat-icon">📋</span>
+          <div>
+            <strong>Gestión de cuenta</strong>
+            <span>Datos personales y documentos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <h3>Editar Cuenta</h3>
-    <h5>Los campos marcados con * son obligatorios</h5>
+  <!-- ============================= -->
+  <!-- SECCIÓN 1: DATOS DE CUENTA    -->
+  <!-- Layout: form (izq) + tip (der) -->
+  <!-- ============================= -->
+  <div class="perfil-body">
+    <div class="section-row">
 
-    <form [formGroup]="perfilForm" (ngSubmit)="actualizarUsuario()">
-
-        <div>
-            <label>Primer Nombre *</label>
-            <input type="text" formControlName="primer_nombre">
+      <!-- Formulario de perfil -->
+      <div class="perfil-card main-card">
+        <div class="card-header">
+          <div class="card-header-icon">👤</div>
+          <div>
+            <h3>Datos Personales</h3>
+            <p>Los campos con <span class="required">*</span> son obligatorios</p>
+          </div>
         </div>
 
-        <div>
-            <label>Segundo Nombre</label>
-            <input type="text" formControlName="segundo_nombre">
-        </div>
+        <form [formGroup]="perfilForm" (ngSubmit)="actualizarUsuario()" class="perfil-form">
 
-        <div>
-            <label>Primer Apellido *</label>
-            <input type="text" formControlName="primer_apellido">
-        </div>
-
-        <div>
-            <label>Segundo Apellido</label>
-            <input type="text" formControlName="segundo_apellido">
-        </div>
-
-        <div>
-            <label>Teléfono</label>
-            <input type="text" formControlName="telefono">
-        </div>
-
-        <button type="submit" [disabled]="perfilForm.invalid">
-            Actualizar
-        </button>
-
-    </form>
-
-</div>
-
-
-<!-- SECCIÓN DOCUMENTOS -->
-
-<div class="principal-content">
-
-    <h2>Documentos</h2>
-
-    <table>
-
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tipo</th>
-                <th>Número</th>
-                <th>Lugar</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            <tr *ngFor="let d of documentos">
-
-                <td>{{d.id_documento}}</td>
-                <td>{{d.tipo_documento}}</td>
-                <td>{{d.numero_documento}}</td>
-                <td>{{d.lugar_expedicion}}</td>
-
-                <td>
-                    <span *ngIf="d.estado == 1">Activo</span>
-                    <span *ngIf="d.estado == 0">Inactivo</span>
-                </td>
-
-            </tr>
-
-        </tbody>
-
-    </table>
-
-
-    <!-- FORMULARIO NUEVO DOCUMENTO -->
-
-    <div class="form-documento">
-
-        <h3>Agregar Documento</h3>
-
-        <form [formGroup]="documentoForm" (ngSubmit)="crearDocumento()">
-
-            <div>
-                <label>Tipo</label>
-
-                <select formControlName="id_tdocumento">
-
-                    <option value="">Seleccione</option>
-
-                    <option *ngFor="let t of tiposDoc" [value]="t.id_tdocumento">
-                        {{t.nombre}}
-                    </option>
-
-                </select>
-
+          <div class="form-section-label"><span>Nombres</span></div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Primer Nombre <span class="required">*</span></label>
+              <input type="text" formControlName="primer_nombre" placeholder="Ej: Carlos" />
             </div>
-
-            <div>
-                <label>Número</label>
-                <input type="text" formControlName="numero_documento">
+            <div class="form-group">
+              <label>Segundo Nombre</label>
+              <input type="text" formControlName="segundo_nombre" placeholder="Opcional" />
             </div>
+          </div>
 
-            <div>
-                <label>Lugar de Expedición</label>
-                <input type="text" formControlName="lugar_expedicion">
+          <div class="form-section-label"><span>Apellidos</span></div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Primer Apellido <span class="required">*</span></label>
+              <input type="text" formControlName="primer_apellido" placeholder="Ej: García" />
             </div>
+            <div class="form-group">
+              <label>Segundo Apellido</label>
+              <input type="text" formControlName="segundo_apellido" placeholder="Opcional" />
+            </div>
+          </div>
 
-            <button type="submit">
-                Agregar
+          <div class="form-section-label"><span>Contacto</span></div>
+          <div class="form-grid form-grid--1">
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input type="text" formControlName="telefono" placeholder="Ej: 3001234567" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-save" [disabled]="perfilForm.invalid">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/>
+                <polyline points="7 3 7 8 15 8"/>
+              </svg>
+              Guardar cambios
             </button>
+          </div>
 
         </form>
+      </div>
 
-    </div>
+      <!-- Panel lateral informativo -->
+      <div class="side-panel">
 
-</div>
+        <div class="side-tip-card">
+          <div class="tip-icon">💡</div>
+          <h4>Consejos</h4>
+          <ul class="tip-list">
+            <li>Mantén tu teléfono actualizado para recibir notificaciones de reservas.</li>
+            <li>Tu nombre aparecerá en los comprobantes de estadía.</li>
+            <li>Los campos opcionales ayudan a identificarte correctamente.</li>
+          </ul>
+        </div>
+
+        <div class="side-info-card">
+          <div class="info-icon">🔐</div>
+          <h4>Seguridad</h4>
+          <p>Si necesitas cambiar tu contraseña, usa la opción <strong>¿Olvidaste tu contraseña?</strong> desde la pantalla de inicio de sesión.</p>
+        </div>
+
+      </div>
+
+    </div><!-- /section-row -->
+
+    <!-- ============================= -->
+    <!-- SECCIÓN 2: DOCUMENTOS         -->
+    <!-- Layout: tabla arriba, form abajo -->
+    <!-- ============================= -->
+    <div class="perfil-card docs-card">
+
+      <div class="card-header">
+        <div class="card-header-icon">📄</div>
+        <div>
+          <h3>Documentos de Identidad</h3>
+          <p>Documentos registrados en el sistema para tu perfil.</p>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-wrapper">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Tipo</th>
+              <th>Número</th>
+              <th>Lugar de Expedición</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of documentos">
+              <td class="td-id">{{ d.id_documento }}</td>
+              <td><span class="tipo-badge">{{ d.tipo_documento }}</span></td>
+              <td class="td-mono">{{ d.numero_documento }}</td>
+              <td>{{ d.lugar_expedicion }}</td>
+              <td>
+                <span class="badge-estado activo"   *ngIf="d.estado == 1">✔ Activo</span>
+                <span class="badge-estado inactivo" *ngIf="d.estado == 0">✖ Inactivo</span>
+              </td>
+            </tr>
+            <tr *ngIf="documentos?.length === 0">
+              <td colspan="5" class="empty-row">
+                <span>📭</span> No hay documentos registrados aún.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Divisor con etiqueta -->
+      <div class="section-divider">
+        <span>➕ Agregar nuevo documento</span>
+      </div>
+
+      <!-- Formulario nuevo documento -->
+      <form [formGroup]="documentoForm" (ngSubmit)="crearDocumento()" class="doc-form">
+        <div class="form-grid form-grid--3">
+          <div class="form-group">
+            <label>Tipo de documento</label>
+            <select formControlName="id_tdocumento">
+              <option value="">Seleccione un tipo</option>
+              <option *ngFor="let t of tiposDoc" [value]="t.id_tdocumento">
+                {{ t.nombre }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Número de documento</label>
+            <input type="text" formControlName="numero_documento" placeholder="Ej: 1234567890" />
+          </div>
+          <div class="form-group">
+            <label>Lugar de Expedición</label>
+            <input type="text" formControlName="lugar_expedicion" placeholder="Ej: Bogotá" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-add">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            Agregar documento
+          </button>
+        </div>
+      </form>
+
+    </div><!-- /docs-card -->
+
+  </div><!-- /perfil-body -->
+</div><!-- /perfil-container -->
 
 <app-footer></app-footer>

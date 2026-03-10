@@ -7,7 +7,6 @@ import { Principal } from './pages/principal/principal';
 import { Perfil } from './pages/perfil/perfil';
 import { CInformaciont } from './pages/c-informaciont/c-informaciont';
 import { CReservar } from './pages/c-reservar/c-reservar';
-import { CReservas } from './pages/c-reservas/c-reservas';
 import { CReservasH } from './pages/c-reservas-h/c-reservas-h';
 import { CSolicitar } from './pages/c-solicitar/c-solicitar';
 
@@ -19,7 +18,6 @@ export const routes: Routes = [
     { path: 'perfil', component: Perfil },
     { path: 'c-informaciont', component: CInformaciont },
     { path: 'c-reservar', component: CReservar },
-    { path: 'c-reservas', component: CReservas },
     { path: 'c-reservas-h', component: CReservasH },
     { path: 'c-solicitar', component: CSolicitar },
     { path: '**', component: NoEncontrado }

@@ -1,0 +1,361 @@
+/* ================================== */
+/* LAYOUT PRINCIPAL                   */
+/* ================================== */
+.historial-container {
+  min-height: 100vh;
+  background: var(--color-background-gray);
+  padding-top: 112px;
+  padding-bottom: 70px;
+}
+
+/* ================================== */
+/* PAGE HEADER                        */
+/* ================================== */
+.page-header {
+  background: var(--color-dark);
+  background-image:
+    radial-gradient(ellipse at 10% 60%, rgba(30, 58, 138, 0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 20%, rgba(252, 211, 77, 0.05) 0%, transparent 50%),
+    linear-gradient(150deg, #060b14 0%, var(--color-dark) 100%);
+  padding: 44px 0;
+  margin-bottom: 36px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid rgba(252, 211, 77, 0.1);
+}
+
+.page-header-bg-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(252, 211, 77, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.page-header-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-tag {
+  display: inline-block;
+  background: rgba(252, 211, 77, 0.1);
+  color: var(--color-secondary);
+  border: 1px solid rgba(252, 211, 77, 0.25);
+  padding: 4px 14px;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.page-header-left h1 {
+  font-family: 'Georgia', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--color-light);
+  line-height: 1.15;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.page-header-left h1 em {
+  font-style: italic;
+  color: var(--color-secondary);
+}
+
+.page-header-left p {
+  font-size: 0.92rem;
+  color: rgba(226, 232, 240, 0.6);
+  line-height: 1.6;
+}
+
+.header-stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 16px 22px;
+  flex-shrink: 0;
+}
+
+.header-stat-icon { font-size: 1.6rem; }
+
+.header-stat strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--color-light);
+  margin-bottom: 3px;
+}
+
+.header-stat span {
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.5);
+}
+
+/* ================================== */
+/* BODY                               */
+/* ================================== */
+.historial-body {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+/* ================================== */
+/* LOADING BAR                        */
+/* ================================== */
+.loading-bar-wrap {
+  width: 100%;
+  max-width: 500px;
+  margin: 40px auto;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  width: 30%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  border-radius: 4px;
+  animation: loadingMove 1.5s infinite linear;
+}
+
+@keyframes loadingMove {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(433%); }
+}
+
+/* ================================== */
+/* EMPTY STATE                        */
+/* ================================== */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  background: var(--color-light);
+  border-radius: 20px;
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.empty-icon {
+  font-size: 2.8rem;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.empty-state h4 {
+  font-family: 'Georgia', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-dark-text);
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  font-size: 0.88rem;
+  color: var(--color-medium-gray);
+  margin: 0;
+}
+
+/* ================================== */
+/* CARD                               */
+/* ================================== */
+.perfil-card {
+  background: var(--color-light);
+  border-radius: 20px;
+  padding: 36px 40px;
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: box-shadow 0.3s;
+}
+
+.perfil-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.09);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.card-header-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--color-background-gray);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.card-header h3 {
+  font-family: 'Georgia', serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-dark-text);
+  margin-bottom: 4px;
+}
+
+.card-header p {
+  font-size: 0.82rem;
+  color: var(--color-medium-gray);
+  margin: 0;
+}
+
+/* ================================== */
+/* TABLA                              */
+/* ================================== */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid #f1f5f9;
+}
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.doc-table thead {
+  background: var(--color-background-gray);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.doc-table th {
+  padding: 13px 18px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-medium-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.doc-table td {
+  padding: 14px 18px;
+  color: var(--color-dark-text);
+  border-bottom: 1px solid #f8fafc;
+  vertical-align: middle;
+}
+
+.doc-table tbody tr:last-child td { border-bottom: none; }
+
+/* Animación de entrada escalonada */
+.doc-table tbody tr {
+  opacity: 0;
+  animation: rowSlideIn 0.35s ease-out forwards;
+}
+
+@keyframes rowSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.doc-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Animación fade-in de la tabla completa */
+.doc-table.fade-in {
+  animation: fadeUp 0.5s ease-out both;
+}
+
+.td-id {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.5px;
+}
+
+/* ================================== */
+/* BADGES DE ESTADO                   */
+/* ================================== */
+.badge-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badge-estado.terminado {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badge-estado.cancelado {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--color-error);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.badge-estado.otro {
+  background: rgba(75, 85, 99, 0.08);
+  color: var(--color-medium-gray);
+  border: 1px solid rgba(75, 85, 99, 0.15);
+  text-transform: capitalize;
+}
+
+/* ================================== */
+/* RESPONSIVE — 900px                 */
+/* ================================== */
+@media (max-width: 900px) {
+  .page-header-right { display: none; }
+}
+
+/* ================================== */
+/* RESPONSIVE — 768px                 */
+/* ================================== */
+@media (max-width: 768px) {
+  .historial-container { padding-top: 106px; }
+  .page-header { padding: 32px 0; }
+  .page-header-left h1 { font-size: 1.8rem; }
+  .historial-body { padding: 0 16px; }
+  .perfil-card { padding: 24px 20px; }
+  .doc-table th, .doc-table td { padding: 11px 12px; font-size: 0.82rem; }
+}
+
+/* ================================== */
+/* RESPONSIVE — 480px                 */
+/* ================================== */
+@media (max-width: 480px) {
+  .page-header-left h1 { font-size: 1.55rem; }
+  .card-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
