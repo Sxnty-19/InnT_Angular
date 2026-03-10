@@ -30,14 +30,10 @@ export class Perfil {
       segundo_nombre: [''],
       primer_apellido: ['', Validators.required],
       segundo_apellido: [''],
-      username: ['', Validators.required],
-      correo: [''],
-      telefono: [''],
-      password: ['', Validators.minLength(6)]
+      telefono: ['']
     });
 
     this.cargarDatosUsuario();
-
   }
 
   cargarDatosUsuario() {
@@ -45,7 +41,6 @@ export class Perfil {
     this.usuarioService.getUsuarioToken().subscribe((res: any) => {
 
       const user = res.data;
-
       this.usuarioActual = user;
 
       this.perfilForm.patchValue({
@@ -54,10 +49,9 @@ export class Perfil {
         primer_apellido: user[4],
         segundo_apellido: user[5],
         telefono: user[6],
-        correo: user[7],
-        username: user[8]
       });
 
+      this.cd.detectChanges();
     });
 
   }
@@ -65,25 +59,17 @@ export class Perfil {
   actualizarUsuario() {
 
     const data = {
-      ...this.usuarioActual,
-      ...this.perfilForm.value
+      primer_nombre: this.perfilForm.value.primer_nombre,
+      segundo_nombre: this.perfilForm.value.segundo_nombre,
+      primer_apellido: this.perfilForm.value.primer_apellido,
+      segundo_apellido: this.perfilForm.value.segundo_apellido,
+      telefono: this.perfilForm.value.telefono
     };
-
-    if (!data.password) {
-      data.password = this.usuarioActual[9];
-    }
 
     this.usuarioService.updateUsuario(data).subscribe({
 
       next: () => {
-
-        alert("Usuario actualizado correctamente: Algunos cambios pueden requerir que vuelvas a iniciar sesión.");
-
-        // limpiar campo contraseña
-        this.perfilForm.patchValue({
-          password: ''
-        });
-
+        alert("Usuario actualizado correctamente");
       },
 
       error: (err) => {
