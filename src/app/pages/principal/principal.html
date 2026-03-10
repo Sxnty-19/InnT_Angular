@@ -1,50 +1,85 @@
 <div class="principal-container">
+  <app-navbar></app-navbar>
+  <app-navbar-a></app-navbar-a>
 
-    <app-navbar></app-navbar>
-    <app-navbar-a></app-navbar-a>
+  <div class="principal-content">
+    <section class="main-content">
 
-    <div class="principal-content">
-        <section class="main-content">
+      <!-- Si hay usuario -->
+      <div *ngIf="nombre_U; else noUser" class="welcome-wrapper">
 
-            <!-- Si hay usuario -->
-            <div *ngIf="nombre_U; else noUser" class="welcome-box">
+        <!-- Saludo principal -->
+        <div class="welcome-hero">
+          <div class="welcome-hero-bg-dots"></div>
+          <div class="welcome-hero-inner">
+            <span class="welcome-tag">✦ Panel de inicio</span>
+            <h2 class="welcome-title">
+              ¡Bienvenido(a),<br />
+              <em>{{ nombre_U }}</em>!
+            </h2>
+            <p class="welcome-subtitle">
+              Tienes acceso como <strong>{{ nombre_r }}</strong>. Selecciona un módulo arriba para comenzar.
+            </p>
+          </div>
+        </div>
 
-                <h2 class="title">
-                    ¡Bienvenido(a)! <br>
-                    <span class="highlight">{{ nombre_U }}</span>
-                </h2>
+        <!-- Caja de tip -->
+        <div class="tip-box">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text">
+            <strong>¿Cómo navegar?</strong>
+            <p>Usa la barra de <strong>"Módulos"</strong> en la parte superior para acceder a las distintas secciones del sistema según tu rol.</p>
+          </div>
+        </div>
 
-                <div class="tip-box">
-                    <p>
-                        Utiliza la barra de <strong>"Módulos"</strong> (arriba) para navegar
-                        a las distintas secciones del sistema.
-                        Tu rol actual es: <strong>{{ nombre_r }}</strong>.
-                    </p>
-                </div>
-
+        <!-- Tarjetas de acceso rápido -->
+        <div class="quick-cards">
+          <div class="quick-card">
+            <div class="quick-card-icon">🏨</div>
+            <div class="quick-card-body">
+              <h4>Habitaciones</h4>
+              <p>Consulta disponibilidad y estado de las habitaciones.</p>
             </div>
+          </div>
+          <div class="quick-card">
+            <div class="quick-card-icon">📋</div>
+            <div class="quick-card-body">
+              <h4>Reservas</h4>
+              <p>Gestiona las reservas activas y el historial de estancias.</p>
+            </div>
+          </div>
+          <div class="quick-card">
+            <div class="quick-card-icon">👥</div>
+            <div class="quick-card-body">
+              <h4>Huéspedes</h4>
+              <p>Administra la información de los huéspedes registrados.</p>
+            </div>
+          </div>
+          <div class="quick-card">
+            <div class="quick-card-icon">📊</div>
+            <div class="quick-card-body">
+              <h4>Reportes</h4>
+              <p>Visualiza estadísticas y reportes del sistema.</p>
+            </div>
+          </div>
+        </div>
 
-            <!-- Si no hay usuario -->
-            <ng-template #noUser>
+      </div>
 
-                <div class="no-user-message">
+      <!-- Si no hay usuario -->
+      <ng-template #noUser>
+        <div class="no-user-wrapper">
+          <div class="no-user-icon">⏳</div>
+          <h2>Cargando sesión...</h2>
+          <p>
+            Si esto tarda demasiado, por favor
+            <a routerLink="/login" class="login-link">inicia sesión nuevamente</a>.
+          </p>
+        </div>
+      </ng-template>
 
-                    <h2 class="title">Cargando...</h2>
+    </section>
+  </div>
 
-                    <p>
-                        Si esto tarda, por favor
-                        <a routerLink="/login" class="login-link">
-                            inicia sesión
-                        </a>.
-                    </p>
-
-                </div>
-
-            </ng-template>
-
-        </section>
-    </div>
-
-    <app-footer></app-footer>
-
+  <app-footer></app-footer>
 </div>
