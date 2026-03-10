@@ -5,6 +5,7 @@ import { NavbarA } from '../../components/navbar-a/navbar-a';
 import { Footer } from '../../components/footer/footer';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Usuario } from '../../services/usuario';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-perfil',
@@ -15,11 +16,17 @@ import { Usuario } from '../../services/usuario';
 export class Perfil {
 
   perfilForm!: FormGroup;
+  documentoForm!: FormGroup;
+
   usuarioActual: any;
+
+  documentos: any[] = [];
+  tiposDoc: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private usuarioService: Usuario,
+    private http: HttpClient,
     private cd: ChangeDetectorRef
   ) { }
 
@@ -33,7 +40,15 @@ export class Perfil {
       telefono: ['']
     });
 
+    this.documentoForm = this.fb.group({
+      id_tdocumento: ['', Validators.required],
+      numero_documento: ['', Validators.required],
+      lugar_expedicion: ['', Validators.required],
+      estado: [1]
+    });
+
     this.cargarDatosUsuario();
+    this.cargarTiposDocumento();
   }
 
   cargarDatosUsuario() {
@@ -51,6 +66,8 @@ export class Perfil {
         telefono: user[6],
       });
 
+      this.cargarDocumentos();
+
       this.cd.detectChanges();
     });
 
@@ -58,18 +75,77 @@ export class Perfil {
 
   actualizarUsuario() {
 
-    const data = {
-      primer_nombre: this.perfilForm.value.primer_nombre,
-      segundo_nombre: this.perfilForm.value.segundo_nombre,
-      primer_apellido: this.perfilForm.value.primer_apellido,
-      segundo_apellido: this.perfilForm.value.segundo_apellido,
-      telefono: this.perfilForm.value.telefono
-    };
+    const data = this.perfilForm.value;
 
     this.usuarioService.updateUsuario(data).subscribe({
 
       next: () => {
         alert("Usuario actualizado correctamente");
+      },
+
+      error: (err) => {
+        console.error(err);
+      }
+
+    });
+
+  }
+
+  // =========================
+  // TIPOS DOCUMENTO
+  // =========================
+
+  cargarTiposDocumento() {
+
+    this.http.get<any>('https://inntech-backend.onrender.com/tipos_documento/get_tipos_documento')
+      .subscribe(res => {
+        this.tiposDoc = res.data;
+      });
+
+  }
+
+  // =========================
+  // DOCUMENTOS USUARIO
+  // =========================
+
+  cargarDocumentos() {
+
+    this.http.get<any>('https://inntech-backend.onrender.com/documentos/get_documentos_completo')
+      .subscribe(res => {
+
+        this.documentos = res.data.filter((d: any) =>
+          d.id_usuario === this.usuarioActual[0]
+        );
+
+      });
+
+  }
+
+  // =========================
+  // CREAR DOCUMENTO
+  // =========================
+
+  crearDocumento() {
+
+    const payload = {
+      ...this.documentoForm.value,
+      id_usuario: this.usuarioActual[0]
+    };
+
+    this.http.post(
+      'https://inntech-backend.onrender.com/documentos/create_documento',
+      payload
+    ).subscribe({
+
+      next: () => {
+
+        alert("Documento creado");
+
+        this.documentoForm.reset({
+          estado: 1
+        });
+
+        this.cargarDocumentos();
       },
 
       error: (err) => {

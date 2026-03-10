@@ -54,40 +54,33 @@
 
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Tipo</th>
                 <th>Número</th>
-                <th>Lugar de Expedición</th>
-                <th>Foto</th>
-                <th>Aprobado</th>
-                <th>Acciones</th>
+                <th>Lugar</th>
+                <th>Estado</th>
             </tr>
         </thead>
 
         <tbody>
 
-            <!-- luego aquí iría el *ngFor -->
+            <tr *ngFor="let d of documentos">
 
-            <tr>
-                <td>Cédula</td>
-                <td>123456789</td>
-                <td>Barranquilla</td>
-                <td>foto.jpg</td>
-                <td>Si</td>
+                <td>{{d.id_documento}}</td>
+                <td>{{d.tipo_documento}}</td>
+                <td>{{d.numero_documento}}</td>
+                <td>{{d.lugar_expedicion}}</td>
+
                 <td>
-                    <button>Ver</button>
-                    <button>Eliminar</button>
+                    <span *ngIf="d.estado == 1">Activo</span>
+                    <span *ngIf="d.estado == 0">Inactivo</span>
                 </td>
+
             </tr>
 
         </tbody>
 
     </table>
-
-    <br>
-
-    <button>
-        Agregar nuevo
-    </button>
 
 
     <!-- FORMULARIO NUEVO DOCUMENTO -->
@@ -96,31 +89,31 @@
 
         <h3>Agregar Documento</h3>
 
-        <form>
+        <form [formGroup]="documentoForm" (ngSubmit)="crearDocumento()">
 
             <div>
                 <label>Tipo</label>
-                <select>
+
+                <select formControlName="id_tdocumento">
+
                     <option value="">Seleccione</option>
-                    <option>Cédula</option>
-                    <option>Pasaporte</option>
-                    <option>Licencia</option>
+
+                    <option *ngFor="let t of tiposDoc" [value]="t.id_tdocumento">
+                        {{t.nombre}}
+                    </option>
+
                 </select>
+
             </div>
 
             <div>
                 <label>Número</label>
-                <input type="text">
+                <input type="text" formControlName="numero_documento">
             </div>
 
             <div>
                 <label>Lugar de Expedición</label>
-                <input type="text">
-            </div>
-
-            <div>
-                <label>Agregar Foto</label>
-                <input type="file">
+                <input type="text" formControlName="lugar_expedicion">
             </div>
 
             <button type="submit">
