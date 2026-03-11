@@ -1,1 +1,109 @@
-<p>l-habitaciones works!</p>
+<app-navbar></app-navbar>
+<app-navbar-a></app-navbar-a>
+
+<div class="habitaciones-container">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-bg-dots"></div>
+    <div class="page-header-content">
+      <div class="page-header-left">
+        <span class="page-tag">✦ Limpieza</span>
+        <h1>Gestión de <em>Habitaciones</em></h1>
+        <p>Las habitaciones pendientes aparecen primero para atención inmediata.</p>
+      </div>
+      <div class="page-header-right">
+        <div class="header-stat">
+          <span class="header-stat-icon">🧹</span>
+          <div>
+            <strong>{{ habitaciones.length }} habitaciones</strong>
+            <span>{{ getPendientes() }} pendiente(s) de limpieza</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="habitaciones-body">
+    <div class="perfil-card">
+
+      <div class="card-header">
+        <div class="card-header-icon">🏨</div>
+        <div>
+          <h3>Estado de Limpieza</h3>
+          <p>Marca las habitaciones como limpias al terminar.</p>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-bar-wrap" *ngIf="loading">
+        <div class="loading-bar"></div>
+        <p class="loading-text">Cargando datos de habitaciones...</p>
+      </div>
+
+      <!-- Error -->
+      <div class="empty-state" *ngIf="!loading && error">
+        <span class="empty-icon">⚠️</span>
+        <h4>Error al cargar</h4>
+        <p>{{ error }}</p>
+        <button class="btn-retry" (click)="cargarHabitaciones()">Reintentar</button>
+      </div>
+
+      <!-- Sin habitaciones -->
+      <div class="empty-state" *ngIf="!loading && !error && habitaciones.length === 0">
+        <span class="empty-icon">🏨</span>
+        <h4>Sin habitaciones registradas</h4>
+        <p>No hay habitaciones registradas en el sistema.</p>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-wrapper" *ngIf="!loading && habitaciones.length > 0">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th class="col-numero">Número</th>
+              <th class="col-tipo">Tipo</th>
+              <th class="col-estado">Estado</th>
+              <th class="col-accion">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of habitaciones" [class.row-dirty]="h.estado === 0">
+              <td class="td-numero" [attr.data-label]="'Número'">{{ h.numero }}</td>
+              <td [attr.data-label]="'Tipo'">{{ h.id_thabitacion }}</td>
+              <td [attr.data-label]="'Estado'">
+                <span class="badge-estado limpia" *ngIf="h.estado === 1">
+                  ✔ Limpia
+                </span>
+                <span class="badge-estado sucia" *ngIf="h.estado === 0">
+                  🧹 Sucia
+                </span>
+              </td>
+              <td [attr.data-label]="'Acción'">
+                <button
+                  class="btn-limpiar"
+                  *ngIf="h.estado === 0"
+                  (click)="marcarLimpia(h.numero)">
+                  ✦ Marcar como lista
+                </button>
+                <span class="td-ok" *ngIf="h.estado === 1">Habitación lista</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+
+<!-- TOAST FLOTANTE -->
+<div class="notification-toast"
+     *ngIf="showMessage"
+     [class.success]="isSuccess"
+     [class.error]="!isSuccess">
+  <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
+  <p>{{ message }}</p>
+</div>
