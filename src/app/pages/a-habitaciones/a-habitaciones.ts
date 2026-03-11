@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
@@ -27,6 +27,8 @@ interface Habitacion {
   styleUrl: './a-habitaciones.css',
 })
 export class AHabitaciones implements OnInit {
+
+  constructor(private cd: ChangeDetectorRef) { }
 
   private readonly BASE = 'https://inntech-backend.onrender.com';
 
@@ -114,10 +116,13 @@ export class AHabitaciones implements OnInit {
     try {
       const data = await this.safeFetch(`${this.BASE}/tipos_habitacion/get_tipos_habitacion`);
       this.tipos = data.data || [];
+      this.cd.detectChanges();
     } catch {
       this.errorTipos = 'No se pudieron cargar los tipos de habitación.';
+      this.cd.detectChanges();
     } finally {
       this.loadingTipos = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -130,10 +135,13 @@ export class AHabitaciones implements OnInit {
     try {
       const data = await this.safeFetch(`${this.BASE}/habitaciones/get_habitaciones`);
       this.habitaciones = data.data || [];
+      this.cd.detectChanges();
     } catch {
       this.errorHabitaciones = 'No se pudieron cargar las habitaciones.';
+      this.cd.detectChanges();
     } finally {
       this.loadingHabitaciones = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -160,6 +168,7 @@ export class AHabitaciones implements OnInit {
       // El mensaje de error ya se muestra en safeFetch
     } finally {
       this.isSubmittingTipo = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -186,6 +195,7 @@ export class AHabitaciones implements OnInit {
       // El mensaje de error ya se muestra en safeFetch
     } finally {
       this.isSubmittingHabitacion = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -208,6 +218,7 @@ export class AHabitaciones implements OnInit {
       });
       this.showCustomMessage(`Habitación ${h.numero} marcada como ${nuevoEstadoTexto}.`, true);
       await this.cargarHabitaciones();
+      this.cd.detectChanges();
     } catch {
       // El mensaje de error ya se muestra en safeFetch
     }

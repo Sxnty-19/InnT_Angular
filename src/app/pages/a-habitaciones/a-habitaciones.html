@@ -29,18 +29,18 @@
     <!-- TABS -->
     <div class="tabs-nav">
       <button class="tab-btn" [class.active]="activeView === 'tipos'" (click)="activeView = 'tipos'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="8" width="18" height="12" rx="2"/>
-          <path d="M10 8V6a2 2 0 1 1 4 0v2"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="3" y="8" width="18" height="12" rx="2" />
+          <path d="M10 8V6a2 2 0 1 1 4 0v2" />
         </svg>
         Tipos de Habitación
       </button>
       <button class="tab-btn" [class.active]="activeView === 'habitaciones'" (click)="activeView = 'habitaciones'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="20" height="18" rx="2"/>
-          <path d="M8 3v18M2 9h6M2 15h6"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="18" rx="2" />
+          <path d="M8 3v18M2 9h6M2 15h6" />
         </svg>
         Habitaciones Registradas
       </button>
@@ -66,13 +66,11 @@
           <div class="form-grid-tipo">
             <div class="form-group">
               <label>Nombre</label>
-              <input type="text" [(ngModel)]="nuevoTipo.nombre"
-                placeholder="Ej: Doble, Suite" />
+              <input type="text" [(ngModel)]="nuevoTipo.nombre" placeholder="Ej: Doble, Suite" />
             </div>
             <div class="form-group">
               <label>Capacidad Máxima</label>
-              <input type="number" min="1" [(ngModel)]="nuevoTipo.capacidad_max"
-                placeholder="Ej: 4" />
+              <input type="number" min="1" [(ngModel)]="nuevoTipo.capacidad_max" placeholder="Ej: 4" />
             </div>
             <div class="form-group form-group--full">
               <label>Descripción</label>
@@ -82,11 +80,11 @@
           </div>
           <button class="btn-guardar" (click)="guardarTipo()" [disabled]="isSubmittingTipo">
             <span class="btn-spinner btn-spinner--dark" *ngIf="isSubmittingTipo"></span>
-            <svg *ngIf="!isSubmittingTipo" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-              <polyline points="17 21 17 13 7 13 7 21"/>
-              <polyline points="7 3 7 8 15 8"/>
+            <svg *ngIf="!isSubmittingTipo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
             </svg>
             {{ isSubmittingTipo ? 'Guardando Tipo...' : 'Guardar Tipo' }}
           </button>
@@ -121,23 +119,16 @@
           <table class="doc-table">
             <thead>
               <tr>
-                <th class="col-id">ID</th>
                 <th>Nombre</th>
                 <th class="col-cap">Capacidad</th>
                 <th>Descripción</th>
-                <th>Estado</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let t of tipos">
-                <td class="col-id td-id" [attr.data-label]="'ID'">{{ t.id_thabitacion }}</td>
                 <td class="td-nombre" [attr.data-label]="'Nombre'">{{ t.nombre }}</td>
                 <td class="col-cap" [attr.data-label]="'Capacidad'">{{ t.capacidad_max }}</td>
                 <td class="td-desc" [attr.data-label]="'Descripción'">{{ t.descripcion || 'N/A' }}</td>
-                <td [attr.data-label]="'Estado'">
-                  <span class="badge-estado activo"   *ngIf="t.estado === 1">Activo</span>
-                  <span class="badge-estado inactivo" *ngIf="t.estado !== 1">Inactivo</span>
-                </td>
               </tr>
             </tbody>
           </table>
@@ -179,20 +170,18 @@
             </div>
             <div class="form-group">
               <label>Número de Habitación</label>
-              <input type="text" [(ngModel)]="nuevaHabitacion.numero"
-                placeholder="Ej: 101" />
+              <input type="text" [(ngModel)]="nuevaHabitacion.numero" placeholder="Ej: 101" />
             </div>
           </div>
 
-          <button class="btn-guardar"
-            (click)="guardarHabitacion()"
+          <button class="btn-guardar" (click)="guardarHabitacion()"
             [disabled]="isSubmittingHabitacion || tipos.length === 0">
             <span class="btn-spinner btn-spinner--dark" *ngIf="isSubmittingHabitacion"></span>
             <svg *ngIf="!isSubmittingHabitacion" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-              <polyline points="17 21 17 13 7 13 7 21"/>
-              <polyline points="7 3 7 8 15 8"/>
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
             </svg>
             {{ isSubmittingHabitacion ? 'Guardando Habitación...' : 'Guardar Habitación' }}
           </button>
@@ -227,7 +216,6 @@
           <table class="doc-table">
             <thead>
               <tr>
-                <th class="col-id">ID</th>
                 <th>Número</th>
                 <th>Tipo</th>
                 <th>Estado Actual</th>
@@ -236,22 +224,19 @@
             </thead>
             <tbody>
               <tr *ngFor="let h of habitaciones" [class.active-row]="h.estado === 1">
-                <td class="col-id td-id" [attr.data-label]="'ID'">{{ h.id_habitacion }}</td>
                 <td class="td-nombre" [attr.data-label]="'Número'">{{ h.numero }}</td>
                 <td [attr.data-label]="'Tipo'">{{ getNombreTipo(h.id_thabitacion) }}</td>
                 <td [attr.data-label]="'Estado Actual'">
                   <span class="badge-estado limpia" *ngIf="h.estado === 1">✔ Limpia</span>
-                  <span class="badge-estado sucia"  *ngIf="h.estado !== 1">🧹 Sucia</span>
+                  <span class="badge-estado sucia" *ngIf="h.estado !== 1">🧹 Sucia</span>
                 </td>
                 <td [attr.data-label]="'Acción'">
                   <!-- Marcar Sucia (estado=1 → pasa a 0) -->
-                  <button *ngIf="h.estado === 1" class="btn-toggle btn-toggle-dirty"
-                    (click)="toggleEstado(h)">
+                  <button *ngIf="h.estado === 1" class="btn-toggle btn-toggle-dirty" (click)="toggleEstado(h)">
                     🧼 Marcar Sucia
                   </button>
                   <!-- Marcar Limpia (estado=0 → pasa a 1) -->
-                  <button *ngIf="h.estado !== 1" class="btn-toggle btn-toggle-clean"
-                    (click)="toggleEstado(h)">
+                  <button *ngIf="h.estado !== 1" class="btn-toggle btn-toggle-clean" (click)="toggleEstado(h)">
                     Habitación Lista
                   </button>
                 </td>
@@ -269,11 +254,8 @@
 <app-footer></app-footer>
 
 <!-- TOAST FLOTANTE -->
-<div class="notification-toast"
-     *ngIf="showMessage"
-     [class.active]="showMessage"
-     [class.success]="isSuccess"
-     [class.error]="!isSuccess">
+<div class="notification-toast" *ngIf="showMessage" [class.active]="showMessage" [class.success]="isSuccess"
+  [class.error]="!isSuccess">
   <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
   <p>{{ message }}</p>
 </div>

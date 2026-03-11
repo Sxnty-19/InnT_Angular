@@ -29,20 +29,20 @@
     <!-- ACCIONES GLOBALES -->
     <div class="top-actions">
       <button class="btn-crear-rol" (click)="showCreateModal = !showCreateModal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="16"/>
-          <line x1="8" y1="12" x2="16" y2="12"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
         </svg>
         {{ showCreateModal ? 'Cerrar Formulario' : 'Crear Nuevo Rol' }}
       </button>
       <button class="btn-refrescar" (click)="cargarRoles()" [disabled]="cargandoRoles">
         <span class="btn-spinner btn-spinner--dark" *ngIf="cargandoRoles"></span>
-        <svg *ngIf="!cargandoRoles" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="23 4 23 10 17 10"/>
-          <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+        <svg *ngIf="!cargandoRoles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
         </svg>
         {{ cargandoRoles ? 'Cargando...' : 'Refrescar Roles' }}
       </button>
@@ -80,7 +80,6 @@
         <table class="doc-table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Nombre</th>
               <th>Descripción</th>
               <th>Estado</th>
@@ -89,11 +88,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let r of roles" [class.active-row]="r.estado === 1">
-              <td class="td-id">{{ r.id_rol }}</td>
               <td class="td-nombre">{{ r.nombre }}</td>
               <td class="td-desc">{{ r.descripcion }}</td>
               <td>
-                <span class="badge-estado activo"  *ngIf="r.estado === 1">Activo</span>
+                <span class="badge-estado activo" *ngIf="r.estado === 1">Activo</span>
                 <span class="badge-estado inactivo" *ngIf="r.estado === 0">Inactivo</span>
               </td>
               <td class="td-actions">
@@ -128,13 +126,11 @@
   <div class="modal-form-grid">
     <div class="form-group">
       <label>Nombre del Rol</label>
-      <input type="text" [(ngModel)]="nuevoRol.nombre"
-        placeholder="Ej: Gerente de Operaciones" />
+      <input type="text" [(ngModel)]="nuevoRol.nombre" placeholder="Ej: Gerente de Operaciones" />
     </div>
     <div class="form-group">
       <label>Descripción</label>
-      <input type="text" [(ngModel)]="nuevoRol.descripcion"
-        placeholder="Ej: Permiso total en Módulos A y B" />
+      <input type="text" [(ngModel)]="nuevoRol.descripcion" placeholder="Ej: Permiso total en Módulos A y B" />
     </div>
     <div class="form-group">
       <label>Estado Inicial</label>
@@ -183,8 +179,7 @@
             </option>
           </select>
         </div>
-        <button class="btn-modal-save btn-block"
-          (click)="handleAsignarModulo()"
+        <button class="btn-modal-save btn-block" (click)="handleAsignarModulo()"
           [disabled]="assigningBusy || !selectedModuloToAssign">
           <span class="btn-spinner btn-spinner--light" *ngIf="assigningBusy"></span>
           {{ assigningBusy ? 'Asignando...' : '🔗 Asignar Permiso' }}
@@ -244,11 +239,8 @@
 </div>
 
 <!-- TOAST FLOTANTE -->
-<div class="notification-toast"
-     *ngIf="showMessage"
-     [class.active]="isModalActive"
-     [class.success]="isSuccess"
-     [class.error]="!isSuccess">
+<div class="notification-toast" *ngIf="showMessage" [class.active]="isModalActive" [class.success]="isSuccess"
+  [class.error]="!isSuccess">
   <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
   <p>{{ message }}</p>
 </div>

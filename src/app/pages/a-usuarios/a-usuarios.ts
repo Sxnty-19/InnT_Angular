@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
@@ -30,6 +30,8 @@ interface Rol {
   styleUrl: './a-usuarios.css',
 })
 export class AUsuarios implements OnInit {
+
+  constructor(private cd: ChangeDetectorRef) { }
 
   private readonly BASE = 'https://inntech-backend.onrender.com';
 
@@ -79,6 +81,7 @@ export class AUsuarios implements OnInit {
   ngOnInit(): void {
     this.cargarRoles();
     this.cargarUsuarios();
+    this.cd.detectChanges(); // Asegura que la vista se actualice después de cargar datos
   }
 
   // ========================
@@ -91,6 +94,7 @@ export class AUsuarios implements OnInit {
       this.fadeTimeout = setTimeout(() => {
         this.showMessage = false;
         resolve();
+        this.cd.detectChanges(); // Asegura que la vista se actualice después de ocultar el mensaje
       }, duration);
     });
   }
@@ -104,6 +108,7 @@ export class AUsuarios implements OnInit {
     this.showMessage = true;
     this.isModalActive = true;
 
+    this.cd.detectChanges();
     this.toastTimeout = setTimeout(() => {
       this.hideMessageWithTransition(300);
     }, 4000);
@@ -118,9 +123,11 @@ export class AUsuarios implements OnInit {
       if (!res.ok) throw new Error('Fallo al obtener roles');
       const data = await res.json();
       this.roles = data.data || [];
+      this.cd.detectChanges();
     } catch (err) {
       console.error('Error cargando roles:', err);
       this.showFloatingMessage('error', 'No se pudieron cargar los roles del sistema.');
+      this.cd.detectChanges();
     }
   }
 
@@ -139,12 +146,15 @@ export class AUsuarios implements OnInit {
       this.usuarios = data.data
         ? data.data.sort((a: Usuario, b: Usuario) => b.id_usuario - a.id_usuario)
         : [];
+      this.cd.detectChanges();
     } catch (err) {
       console.error('Error cargando usuarios:', err);
       this.error = 'No se pudieron cargar los usuarios.';
       this.showFloatingMessage('error', 'Fallo al cargar la lista de usuarios.');
+      this.cd.detectChanges();
     } finally {
       this.loading = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -154,6 +164,7 @@ export class AUsuarios implements OnInit {
   async toggleEstado(usuario: Usuario): Promise<void> {
     if (this.showMessage) await this.hideMessageWithTransition(100);
     this.pendingUpdates.add(usuario.id_usuario);
+    this.cd.detectChanges();
 
     try {
       const url = usuario.estado === 1
@@ -169,8 +180,10 @@ export class AUsuarios implements OnInit {
     } catch (err) {
       console.error('Error al cambiar estado:', err);
       this.showFloatingMessage('error', 'Fallo al cambiar el estado del usuario.');
+      this.cd.detectChanges();
     } finally {
       this.pendingUpdates.delete(usuario.id_usuario);
+      this.cd.detectChanges();
     }
   }
 
@@ -183,6 +196,7 @@ export class AUsuarios implements OnInit {
     if (usuario.id_rol === nuevoRolId || isNaN(nuevoRolId)) return;
 
     this.pendingUpdates.add(usuario.id_usuario);
+    this.cd.detectChanges();
 
     try {
       const res = await fetch(
@@ -196,8 +210,10 @@ export class AUsuarios implements OnInit {
     } catch (err) {
       console.error('Error al cambiar rol:', err);
       this.showFloatingMessage('error', 'Fallo al cambiar el rol del usuario.');
+      this.cd.detectChanges();
     } finally {
       this.pendingUpdates.delete(usuario.id_usuario);
+      this.cd.detectChanges();
     }
   }
 
@@ -218,6 +234,7 @@ export class AUsuarios implements OnInit {
 
     if (this.isSubmitting) return;
     this.isSubmitting = true;
+    this.cd.detectChanges();
     if (this.showMessage) await this.hideMessageWithTransition(100);
 
     try {
@@ -241,6 +258,7 @@ export class AUsuarios implements OnInit {
       this.showFloatingMessage('error', err.message || 'Error desconocido al intentar crear el usuario.');
     } finally {
       this.isSubmitting = false;
+      this.cd.detectChanges();
     }
   }
 

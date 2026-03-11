@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
@@ -28,6 +28,8 @@ interface Documento {
   styleUrl: './a-documentos.css',
 })
 export class ADocumentos implements OnInit {
+
+  constructor(private cd: ChangeDetectorRef) { }
 
   private readonly BASE = 'https://inntech-backend.onrender.com';
 
@@ -130,11 +132,14 @@ export class ADocumentos implements OnInit {
       const data = await res.json();
       if (!data.success) throw new Error(data.detail ?? 'Error al obtener tipos');
       this.tipos = data.data || [];
+      this.cd.detectChanges();
     } catch (err) {
       console.error('Error cargando tipos:', err);
       this.error = 'No se pudieron cargar los tipos de documento.';
+      this.cd.detectChanges();
     } finally {
       this.loadingTipos = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -148,11 +153,14 @@ export class ADocumentos implements OnInit {
       const data = await res.json();
       if (!data.success) throw new Error(data.detail ?? 'Error al obtener documentos');
       this.documentos = data.data || [];
+      this.cd.detectChanges();
     } catch (err) {
       console.error('Error cargando documentos:', err);
       this.error = 'No se pudieron cargar los documentos registrados.';
+      this.cd.detectChanges();
     } finally {
       this.loadingDocumentos = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -193,6 +201,7 @@ export class ADocumentos implements OnInit {
       this.showFloatingMessage('error', err.message || 'Error al crear el tipo de documento. Intente de nuevo.');
     } finally {
       this.isSubmitting = false;
+      this.cd.detectChanges();
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
@@ -26,6 +26,8 @@ interface Reserva {
   styleUrl: './a-reservas.css',
 })
 export class AReservas implements OnInit {
+
+  constructor(private cd: ChangeDetectorRef) { }
 
   private readonly BASE = 'https://inntech-backend.onrender.com';
 
@@ -98,12 +100,15 @@ export class AReservas implements OnInit {
       const res = await fetch(`${this.BASE}/reservas/get_reservas`);
       const data = await res.json();
       this.reservas = res.ok ? (data.data || []) : [];
+      this.cd.detectChanges();
     } catch (e) {
       console.error('Error al cargar todas las reservas:', e);
       this.reservas = [];
       this.showNotification('Error de conexión al cargar el listado.', false);
+      this.cd.detectChanges();
     } finally {
       this.loadingListado = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -151,6 +156,7 @@ export class AReservas implements OnInit {
       this.showNotification('No hay conexión con el servidor.', false);
     } finally {
       this.isLoading = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -166,12 +172,14 @@ export class AReservas implements OnInit {
     }
     this.selectedRooms = [...this.selectedRooms, hab];
     this.showNotification(`Habitación ${hab.nombre} agregada.`, true);
+    this.cd.detectChanges();
   }
 
   quitarHab(id: number): void {
     const roomName = this.selectedRooms.find(x => x.id === id)?.nombre || 'Habitación';
     this.selectedRooms = this.selectedRooms.filter(x => x.id !== id);
     this.showNotification(`${roomName} quitada.`, false);
+    this.cd.detectChanges();
   }
 
   isSelected(id: number): boolean {
@@ -235,6 +243,7 @@ export class AReservas implements OnInit {
       this.showNotification('No hay conexión con el servidor al intentar crear la reserva.', false);
     } finally {
       this.isSubmitting = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -272,6 +281,7 @@ export class AReservas implements OnInit {
     } finally {
       this.isLoading = false;
       this.reservationToCancel = null;
+      this.cd.detectChanges();
     }
   }
 

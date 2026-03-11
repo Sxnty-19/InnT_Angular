@@ -29,21 +29,21 @@
     <!-- TABS -->
     <div class="tabs-nav">
       <button class="tab-btn" [class.active]="activeView === 'history'" (click)="activeView = 'history'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
         Ver Usuarios
       </button>
       <button class="tab-btn" [class.active]="activeView === 'create'" (click)="activeView = 'create'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="8.5" cy="7" r="4"/>
-          <path d="M20 8v6M23 11h-6"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="8.5" cy="7" r="4" />
+          <path d="M20 8v6M23 11h-6" />
         </svg>
         Crear Usuario
       </button>
@@ -170,23 +170,19 @@
 
                 <!-- Select rol — equivale a on:change con el valor parseado -->
                 <td [attr.data-label]="'Rol'">
-                  <select
-                    [ngModel]="u.id_rol"
-                    (ngModelChange)="cambiarRol(u, $event)"
+                  <select [ngModel]="u.id_rol" (ngModelChange)="cambiarRol(u, $event)"
                     [disabled]="isPending(u.id_usuario)">
                     <option *ngFor="let r of roles" [ngValue]="r.id_rol">{{ r.nombre }}</option>
                   </select>
                 </td>
 
                 <td [attr.data-label]="'Estado'">
-                  <span class="badge-estado activo"   *ngIf="u.estado === 1">Activo</span>
+                  <span class="badge-estado activo" *ngIf="u.estado === 1">Activo</span>
                   <span class="badge-estado inactivo" *ngIf="u.estado !== 1">Inactivo</span>
                 </td>
 
                 <td [attr.data-label]="'Acciones'">
-                  <button
-                    [class]="u.estado === 1 ? 'btn-desactivar' : 'btn-activar'"
-                    (click)="toggleEstado(u)"
+                  <button [class]="u.estado === 1 ? 'btn-desactivar' : 'btn-activar'" (click)="toggleEstado(u)"
                     [disabled]="isPending(u.id_usuario)">
                     {{ u.estado === 1 ? 'Desactivar' : 'Activar' }}
                   </button>
@@ -205,11 +201,8 @@
 <app-footer></app-footer>
 
 <!-- TOAST FLOTANTE -->
-<div class="notification-toast"
-     *ngIf="showMessage"
-     [class.active]="isModalActive"
-     [class.success]="isSuccess"
-     [class.error]="!isSuccess">
+<div class="notification-toast" *ngIf="showMessage" [class.active]="isModalActive" [class.success]="isSuccess"
+  [class.error]="!isSuccess">
   <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
   <p>{{ message }}</p>
 </div>

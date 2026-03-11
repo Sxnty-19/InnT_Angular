@@ -9,7 +9,7 @@
     <div class="page-header-content">
       <div class="page-header-left">
         <span class="page-tag">✦ Limpieza</span>
-        <h1>Gestión de <em>Habitaciones</em></h1>
+        <h1>Limpieza de <em>Habitaciones</em></h1>
         <p>Las habitaciones pendientes aparecen primero para atención inmediata.</p>
       </div>
       <div class="page-header-right">
@@ -62,7 +62,6 @@
           <thead>
             <tr>
               <th class="col-numero">Número</th>
-              <th class="col-tipo">Tipo</th>
               <th class="col-estado">Estado</th>
               <th class="col-accion">Acción</th>
             </tr>
@@ -70,7 +69,6 @@
           <tbody>
             <tr *ngFor="let h of habitaciones" [class.row-dirty]="h.estado === 0">
               <td class="td-numero" [attr.data-label]="'Número'">{{ h.numero }}</td>
-              <td [attr.data-label]="'Tipo'">{{ h.id_thabitacion }}</td>
               <td [attr.data-label]="'Estado'">
                 <span class="badge-estado limpia" *ngIf="h.estado === 1">
                   ✔ Limpia
@@ -80,10 +78,7 @@
                 </span>
               </td>
               <td [attr.data-label]="'Acción'">
-                <button
-                  class="btn-limpiar"
-                  *ngIf="h.estado === 0"
-                  (click)="marcarLimpia(h.numero)">
+                <button class="btn-limpiar" *ngIf="h.estado === 0" (click)="marcarLimpia(h.numero)">
                   ✦ Marcar como lista
                 </button>
                 <span class="td-ok" *ngIf="h.estado === 1">Habitación lista</span>
@@ -100,10 +95,7 @@
 <app-footer></app-footer>
 
 <!-- TOAST FLOTANTE -->
-<div class="notification-toast"
-     *ngIf="showMessage"
-     [class.success]="isSuccess"
-     [class.error]="!isSuccess">
+<div class="notification-toast" *ngIf="showMessage" [class.success]="isSuccess" [class.error]="!isSuccess">
   <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
   <p>{{ message }}</p>
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,10 +13,11 @@ export class Navbar implements OnInit {
 
   fullName = '';
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.fullName = localStorage.getItem('nombre') || 'Acceso Denegado (PERMISOS BLOQUEADOS)';
+    this.cd.detectChanges();
   }
 
   irPrincipal(): void {

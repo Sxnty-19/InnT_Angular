@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
@@ -32,6 +32,8 @@ interface ModuloAsignado {
   styleUrl: './a-roles.css',
 })
 export class ARoles implements OnInit {
+
+  constructor(private cd: ChangeDetectorRef) { }
 
   private readonly BASE = 'https://inntech-backend.onrender.com';
 
@@ -68,7 +70,7 @@ export class ARoles implements OnInit {
   // Modal confirmación
   showConfirmModal = false;
   confirmMessage = '';
-  confirmAction: () => void = () => {};
+  confirmAction: () => void = () => { };
 
   // ========================
   // Toast
@@ -125,12 +127,15 @@ export class ARoles implements OnInit {
       const res = await fetch(`${this.BASE}/roles/get_roles`);
       const data = await res.json();
       this.roles = data.data && Array.isArray(data.data) ? data.data : [];
+      this.cd.detectChanges();
     } catch (err) {
       console.error('Error cargando roles:', err);
       this.errorMsg = 'Error cargando roles (ver consola).';
       this.showFloatingMessage('error', 'No se pudieron cargar los roles.');
+      this.cd.detectChanges();
     } finally {
       this.cargandoRoles = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -149,6 +154,7 @@ export class ARoles implements OnInit {
       this.showFloatingMessage('error', 'No se pudieron cargar los módulos disponibles.');
     } finally {
       this.cargandoModulos = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -168,6 +174,7 @@ export class ARoles implements OnInit {
       this.showFloatingMessage('error', 'Error cargando módulos asignados al rol.');
     } finally {
       this.cargandoAsignados = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -204,6 +211,7 @@ export class ARoles implements OnInit {
       this.showFloatingMessage('error', 'Error creando rol (ver consola).');
     } finally {
       this.creandoRol = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -244,6 +252,7 @@ export class ARoles implements OnInit {
           `Estado del rol "${rol.nombre}" cambiado a ${rol.estado === 1 ? 'Inactivo' : 'Activo'}.`
         );
         await this.cargarRoles();
+        this.cd.detectChanges();
       }
     } catch (err) {
       console.error('Error toggleEstadoRol:', err);
@@ -314,6 +323,7 @@ export class ARoles implements OnInit {
       this.showFloatingMessage('error', 'Error al asignar módulo (ver consola).');
     } finally {
       this.assigningBusy = false;
+      this.cd.detectChanges();
     }
   }
 

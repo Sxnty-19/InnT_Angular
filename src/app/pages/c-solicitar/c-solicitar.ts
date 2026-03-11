@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
@@ -21,6 +21,8 @@ interface Notificacion {
   styleUrl: './c-solicitar.css',
 })
 export class CSolicitar implements OnInit {
+
+  constructor(private cd: ChangeDetectorRef) { }
 
   private readonly API = 'https://inntech-backend.onrender.com/notificaciones';
 
@@ -59,27 +61,17 @@ export class CSolicitar implements OnInit {
   // ngOnInit — equivale a código top-level + onMount
   // ========================
   ngOnInit(): void {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        this.user = JSON.parse(storedUser);
+    const id_usuario = localStorage.getItem('id_usuario');
+    const nombre = localStorage.getItem('nombre');
+    const rol = localStorage.getItem('rol');
 
-        // Construcción del nombre completo — igual que Svelte
-        const primer_nombre    = this.user.primer_nombre  || '';
-        const segundo_nombre   = this.user.segundo_nombre  ? ` ${this.user.segundo_nombre}`  : '';
-        const primer_apellido  = this.user.primer_apellido || '';
-        const segundo_apellido = this.user.segundo_apellido ? ` ${this.user.segundo_apellido}` : '';
-
-        this.fullName = `${primer_nombre}${segundo_nombre} ${primer_apellido}${segundo_apellido}`
-          .replace(/\s+/g, ' ')
-          .trim();
-
-        this.rol = this.user.rol;
-      } catch (e) {
-        console.error('Error al parsear usuario:', e);
-      }
+    if (id_usuario) {
+      this.user = {
+        id_usuario: Number(id_usuario)
+      };
+      this.fullName = nombre ?? '';
+      this.rol = rol ?? '';
     }
-
     this.cargarNotificaciones();
   }
 
@@ -133,8 +125,10 @@ export class CSolicitar implements OnInit {
           (a: Notificacion, b: Notificacion) => b.id_notificacion - a.id_notificacion
         );
       }
+      this.cd.detectChanges();
     } catch (e) {
       this.error = 'Error al cargar notificaciones.';
+      this.cd.detectChanges();
     }
   }
 
@@ -160,10 +154,10 @@ export class CSolicitar implements OnInit {
     if (this.showMessage) await this.hideMessageWithTransition(100);
 
     const formData = new FormData();
-    formData.append('id_usuario',        String(this.user.id_usuario));
+    formData.append('id_usuario', String(this.user.id_usuario));
     formData.append('numero_habitacion', this.numeroHabitacion);
-    formData.append('descripcion',       this.descripcion);
-    formData.append('estado',            '1');
+    formData.append('descripcion', this.descripcion);
+    formData.append('estado', '1');
 
     try {
       const res = await fetch(`${this.API}/crear_por_numero`, {
@@ -178,7 +172,7 @@ export class CSolicitar implements OnInit {
       } else {
         this.showFloatingMessage(
           'success',
-          `Notificación creada correctamente para Habitación ${this.numeroHabitacion}! Estado: Activa`
+          `Notificación creada correctamente para Habitación ${this.numeroHabitacion}!`
         );
         this.numeroHabitacion = '';
         this.descripcion = '';
@@ -191,6 +185,7 @@ export class CSolicitar implements OnInit {
       this.showFloatingMessage('error', 'Error de conexión con el servidor. Intente de nuevo.');
     } finally {
       this.isSubmitting = false;
+      this.cd.detectChanges();
     }
   }
 }

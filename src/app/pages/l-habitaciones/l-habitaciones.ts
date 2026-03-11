@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
@@ -17,6 +17,8 @@ interface Habitacion {
   styleUrl: './l-habitaciones.css',
 })
 export class LHabitaciones implements OnInit {
+
+  constructor(private cd: ChangeDetectorRef) { }
 
   private readonly API = 'https://inntech-backend.onrender.com/habitaciones';
 
@@ -79,12 +81,15 @@ export class LHabitaciones implements OnInit {
       this.habitaciones = data.data.sort(
         (a: Habitacion, b: Habitacion) => a.estado - b.estado
       );
+      this.cd.detectChanges();
     } catch (e) {
       console.error(e);
       this.error = 'No se pudieron cargar las habitaciones. Verifique la conexión al servidor.';
       this.showNotification(this.error, false, 4000);
+      this.cd.detectChanges();
     } finally {
       this.loading = false;
+      this.cd.detectChanges();
     }
   }
 
@@ -119,6 +124,7 @@ export class LHabitaciones implements OnInit {
         .map(h => h.numero === numero ? { ...h, estado: 1 } : h)
         .sort((a, b) => a.estado - b.estado);
 
+      this.cd.detectChanges();
       this.showNotification(`Habitación ${numero} marcada como limpia con éxito.`, true, 3000);
 
     } catch (e) {
