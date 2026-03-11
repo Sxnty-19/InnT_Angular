@@ -1,1 +1,226 @@
-<p>a-documentos works!</p>
+<app-navbar></app-navbar>
+<app-navbar-a></app-navbar-a>
+
+<div class="documentos-container">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-bg-dots"></div>
+    <div class="page-header-content">
+      <div class="page-header-left">
+        <span class="page-tag">✦ Administración</span>
+        <h1>Gestión de <em>Documentos</em></h1>
+        <p>Administra los tipos de documento y consulta todos los registros del sistema.</p>
+      </div>
+      <div class="page-header-right">
+        <div class="header-stat">
+          <span class="header-stat-icon">📄</span>
+          <div>
+            <strong>{{ tipos.length }} tipo(s)</strong>
+            <span>{{ documentos.length }} documento(s) registrado(s)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="documentos-body">
+
+    <!-- TABS -->
+    <div class="tabs-nav">
+      <button class="tab-btn" [class.active]="activeView === 'tipos'" (click)="activeView = 'tipos'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        Tipos de Documento
+      </button>
+      <button class="tab-btn" [class.active]="activeView === 'documentos'" (click)="activeView = 'documentos'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <line x1="10" y1="9" x2="9" y2="9"/>
+        </svg>
+        Documentos Registrados
+      </button>
+    </div>
+
+    <!-- ============================= -->
+    <!-- VISTA: TIPOS DE DOCUMENTO     -->
+    <!-- ============================= -->
+    <div *ngIf="activeView === 'tipos'">
+      <div class="perfil-card">
+
+        <div class="card-header">
+          <div class="card-header-icon">🗂️</div>
+          <div>
+            <h3>Crear y Administrar Tipos</h3>
+            <p>Define los tipos de documento que los usuarios pueden registrar.</p>
+          </div>
+        </div>
+
+        <!-- Formulario nuevo tipo -->
+        <div class="form-container">
+          <h4 class="form-title">Nuevo Tipo de Documento</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nombre del Tipo</label>
+              <input type="text" [(ngModel)]="nuevoTipo.nombre"
+                placeholder="Ej: Cédula de Ciudadanía" />
+            </div>
+            <div class="form-group">
+              <label>Descripción</label>
+              <input type="text" [(ngModel)]="nuevoTipo.descripcion"
+                placeholder="Ej: Documento de identidad personal" />
+            </div>
+          </div>
+          <button class="btn-guardar-tipo" (click)="crearTipo()" [disabled]="isSubmitting">
+            <span class="btn-spinner btn-spinner--dark" *ngIf="isSubmitting"></span>
+            <svg *ngIf="!isSubmitting" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            {{ isSubmitting ? 'Guardando...' : 'Guardar Tipo' }}
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="section-divider">
+          <span>Tipos Existentes ({{ tipos.length }})</span>
+        </div>
+
+        <!-- Loading tipos -->
+        <div class="loading-bar-wrap" *ngIf="loadingTipos">
+          <div class="loading-bar"></div>
+        </div>
+
+        <!-- Error -->
+        <div class="empty-state" *ngIf="!loadingTipos && error">
+          <span class="empty-icon">⚠️</span>
+          <h4>Error al cargar</h4>
+          <p>{{ error }}</p>
+        </div>
+
+        <!-- Tabla tipos -->
+        <div class="table-wrapper table-short" *ngIf="!loadingTipos && tipos.length > 0">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th class="col-id">ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Docs. Registrados</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of tipos">
+                <td class="col-id td-id">{{ t.id_tdocumento }}</td>
+                <td class="td-nombre">{{ t.nombre }}</td>
+                <td class="td-desc">{{ t.descripcion }}</td>
+                <td>
+                  <span class="count-badge">{{ countDocumentsByType(t.nombre) }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Sin tipos -->
+        <div class="empty-state" *ngIf="!loadingTipos && !error && tipos.length === 0">
+          <span class="empty-icon">📭</span>
+          <h4>Sin tipos registrados</h4>
+          <p>Crea el primer tipo de documento usando el formulario.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================= -->
+    <!-- VISTA: DOCUMENTOS REGISTRADOS -->
+    <!-- ============================= -->
+    <div *ngIf="activeView === 'documentos'">
+      <div class="perfil-card">
+
+        <div class="card-header">
+          <div class="card-header-icon">📋</div>
+          <div>
+            <h3>Documentos Registrados</h3>
+            <p>Listado completo de todos los documentos en el sistema.</p>
+          </div>
+        </div>
+
+        <!-- Loading documentos -->
+        <div class="loading-bar-wrap" *ngIf="loadingDocumentos">
+          <div class="loading-bar"></div>
+        </div>
+
+        <!-- Error -->
+        <div class="empty-state" *ngIf="!loadingDocumentos && error">
+          <span class="empty-icon">⚠️</span>
+          <h4>Error al cargar</h4>
+          <p>{{ error }}</p>
+        </div>
+
+        <!-- Sin documentos -->
+        <div class="empty-state" *ngIf="!loadingDocumentos && !error && documentos.length === 0">
+          <span class="empty-icon">📭</span>
+          <h4>Sin documentos registrados</h4>
+          <p>No hay documentos en el sistema.</p>
+        </div>
+
+        <!-- Tabla documentos -->
+        <div class="table-wrapper" *ngIf="!loadingDocumentos && documentos.length > 0">
+          <table class="doc-table tabla-documentos">
+            <thead>
+              <tr>
+                <th class="col-id">ID</th>
+                <th>Tipo</th>
+                <th>Número</th>
+                <th>Lugar Exp.</th>
+                <th>Usuario</th>
+                <th>Estado</th>
+                <th>Fecha Creado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of documentos" [class.active-row]="d.estado === 1">
+                <td class="col-id td-id">{{ d.id_documento }}</td>
+                <td class="td-nombre">{{ d.tipo_documento }}</td>
+                <td>{{ d.numero_documento }}</td>
+                <td>{{ d.lugar_expedicion }}</td>
+                <td>{{ d.nombre_completo }}</td>
+                <td>
+                  <span class="badge-estado activo"   *ngIf="d.estado === 1">Activo</span>
+                  <span class="badge-estado inactivo" *ngIf="d.estado !== 1">Inactivo</span>
+                </td>
+                <td>{{ formatFecha(d.date_created) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /documentos-body -->
+</div><!-- /documentos-container -->
+
+<app-footer></app-footer>
+
+<!-- TOAST FLOTANTE -->
+<div class="notification-toast"
+     *ngIf="showMessage"
+     [class.active]="isModalActive"
+     [class.success]="isSuccess"
+     [class.error]="!isSuccess">
+  <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
+  <p>{{ message }}</p>
+</div>
