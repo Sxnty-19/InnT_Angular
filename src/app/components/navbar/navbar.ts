@@ -29,6 +29,7 @@ export class Navbar implements OnInit {
 
   cerrarSesion(): void {
     localStorage.clear();
+    sessionStorage.clear();
     this.router.navigate(['/login']);
   }
 

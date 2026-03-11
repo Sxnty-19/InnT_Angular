@@ -44,14 +44,8 @@
         <label for="username">Usuario</label>
         <div class="input-wrapper">
           <span class="input-icon">👤</span>
-          <input
-            id="username"
-            type="text"
-            name="username"
-            [(ngModel)]="username"
-            placeholder="Tu nombre de usuario"
-            required
-            [disabled]="isLoading" />
+          <input id="username" type="text" name="username" [(ngModel)]="username" placeholder="Tu nombre de usuario"
+            required [disabled]="isLoading" />
         </div>
       </div>
 
@@ -60,18 +54,9 @@
         <label for="password">Contraseña</label>
         <div class="input-wrapper password-wrapper">
           <span class="input-icon">🔒</span>
-          <input
-            id="password"
-            [type]="passwordVisible ? 'text' : 'password'"
-            name="password"
-            [(ngModel)]="password"
-            placeholder="Tu contraseña"
-            required
-            [disabled]="isLoading" />
-          <button
-            type="button"
-            class="toggle-password"
-            (click)="togglePasswordVisibility()"
+          <input id="password" [type]="passwordVisible ? 'text' : 'password'" name="password" [(ngModel)]="password"
+            placeholder="Tu contraseña" required [disabled]="isLoading" />
+          <button type="button" class="toggle-password" (click)="togglePasswordVisibility()"
             [title]="passwordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'">
             {{ passwordVisible ? '🙈' : '👁' }}
           </button>
@@ -96,10 +81,12 @@
       </div>
 
       <!-- Botón Azure -->
-      <button type="button" class="btn-azure">
+      <button type="button" class="btn-azure" (click)="loginAzure()">
         <svg class="azure-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11.5 0L0 6.5v11L11.5 24 23 17.5v-11L11.5 0zm0 2.2l9.3 5.3v10.6l-9.3 5.3-9.3-5.3V7.5l9.3-5.3z" fill="#0078d4"/>
-          <path d="M11.5 4.8L4.2 9v8.4l7.3 4.2 7.3-4.2V9l-7.3-4.2zm0 2.2l5.1 2.9v5.8l-5.1 2.9-5.1-2.9V9.9l5.1-2.9z" fill="#0078d4" opacity="0.6"/>
+          <path d="M11.5 0L0 6.5v11L11.5 24 23 17.5v-11L11.5 0zm0 2.2l9.3 5.3v10.6l-9.3 5.3-9.3-5.3V7.5l9.3-5.3z"
+            fill="#0078d4" />
+          <path d="M11.5 4.8L4.2 9v8.4l7.3 4.2 7.3-4.2V9l-7.3-4.2zm0 2.2l5.1 2.9v5.8l-5.1 2.9-5.1-2.9V9.9l5.1-2.9z"
+            fill="#0078d4" opacity="0.6" />
         </svg>
         Iniciar sesión con Microsoft Azure
       </button>

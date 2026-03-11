@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { Auth } from '../../services/auth';
+import { Azure } from '../../services/azure';
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ export class Login {
   constructor(
     private router: Router,
     private auth: Auth,
+    private azure: Azure,
     private cd: ChangeDetectorRef
   ) { }
 
@@ -53,6 +55,10 @@ export class Login {
         next: (data: any) => this.handleSuccess(data),
         error: (err) => this.handleError(err)
       });
+  }
+
+  loginAzure() {
+    this.azure.signIn();
   }
 
   private handleSuccess(data: any) {
