@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class Auth {
-
   private apiUrl = 'https://innt-fastapi.onrender.com/auth';
 
   constructor(private http: HttpClient) { }

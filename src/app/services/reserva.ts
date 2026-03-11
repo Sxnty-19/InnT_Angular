@@ -1,8 +1,36 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Reserva {
-  
+  private apiUrl = 'https://inntech-backend.onrender.com';
+
+  constructor(private http: HttpClient) { }
+
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
+  }
+
+  getReservasActivas(id_usuario: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/reservas/activas/${id_usuario}`, { headers: this.getHeaders() });
+  }
+
+  getHabitacionesDisponibles(date_start: string, date_end: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/habitaciones/habitaciones_disponibles?date_start=${date_start}&date_end=${date_end}`, { headers: this.getHeaders() });
+  }
+
+  crearReserva(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reservas/create_with_rooms`, payload, { headers: this.getHeaders() });
+  }
+
+  cancelarReserva(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/reservas/cancelar/${id}`, {}, { headers: this.getHeaders() });
+  }
+
+  getHistorial(id_usuario: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/reservas/terminadas/${id_usuario}`, { headers: this.getHeaders() });
+  }
 }

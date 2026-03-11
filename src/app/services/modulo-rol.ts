@@ -6,13 +6,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ModuloRol {
-
   private apiUrl = 'https://innt-fastapi.onrender.com/modulos-roles';
 
   constructor(private http: HttpClient) { }
 
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
+  }
+
   getModulos(): Observable<any> {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.get(`${this.apiUrl}/rol/`, { headers });
+    return this.http.get(`${this.apiUrl}/rol/`, { headers: this.getHeaders() });
   }
 }

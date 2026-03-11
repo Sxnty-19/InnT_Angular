@@ -1,24 +1,44 @@
 import { Routes } from '@angular/router';
 import { Inicio } from './pages/inicio/inicio';
-import { NoEncontrado } from './pages/no-encontrado/no-encontrado';
-import { Login } from './pages/login/login';
-import { Register } from './pages/register/register';
-import { Principal } from './pages/principal/principal';
-import { Perfil } from './pages/perfil/perfil';
+import { ACheckIn } from './pages/a-check-in/a-check-in';
+import { ACheckOut } from './pages/a-check-out/a-check-out';
+import { ADocumentos } from './pages/a-documentos/a-documentos';
+import { AEstadisticas } from './pages/a-estadisticas/a-estadisticas';
+import { AHabitaciones } from './pages/a-habitaciones/a-habitaciones';
+import { AReservas } from './pages/a-reservas/a-reservas';
+import { ARoles } from './pages/a-roles/a-roles';
+import { ASolicitudes } from './pages/a-solicitudes/a-solicitudes';
+import { AUsuarios } from './pages/a-usuarios/a-usuarios';
 import { CInformaciont } from './pages/c-informaciont/c-informaciont';
 import { CReservar } from './pages/c-reservar/c-reservar';
 import { CReservasH } from './pages/c-reservas-h/c-reservas-h';
 import { CSolicitar } from './pages/c-solicitar/c-solicitar';
+import { LHabitaciones } from './pages/l-habitaciones/l-habitaciones';
+import { Perfil } from './pages/perfil/perfil';
+import { Principal } from './pages/principal/principal';
+import { Login } from './pages/login/login';
+import { Register } from './pages/register/register';
+import { NoEncontrado } from './pages/no-encontrado/no-encontrado';
 
 export const routes: Routes = [
     { path: '', component: Inicio },
-    { path: 'login', component: Login },
-    { path: 'register', component: Register },
-    { path: 'principal', component: Principal },
-    { path: 'perfil', component: Perfil },
+    { path: 'a-check-in', component: ACheckIn },
+    { path: 'a-check-out', component: ACheckOut },
+    { path: 'a-documentos', component: ADocumentos },
+    { path: 'a-estadisticas', component: AEstadisticas },
+    { path: 'a-habitaciones', component: AHabitaciones },
+    { path: 'a-reservas', component: AReservas },
+    { path: 'a-roles', component: ARoles },
+    { path: 'a-solicitudes', component: ASolicitudes },
+    { path: 'a-usuarios', component: AUsuarios },
     { path: 'c-informaciont', component: CInformaciont },
     { path: 'c-reservar', component: CReservar },
     { path: 'c-reservas-h', component: CReservasH },
     { path: 'c-solicitar', component: CSolicitar },
+    { path: 'l-habitaciones', component: LHabitaciones },
+    { path: 'perfil', component: Perfil },
+    { path: 'principal', component: Principal },
+    { path: 'login', component: Login },
+    { path: 'register', component: Register },
     { path: '**', component: NoEncontrado }
 ];

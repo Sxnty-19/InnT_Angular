@@ -79,11 +79,11 @@
 
           <div class="form-actions">
             <button type="submit" class="btn-save" [disabled]="perfilForm.invalid">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                <polyline points="17 21 17 13 7 13 7 21"/>
-                <polyline points="7 3 7 8 15 8"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                <polyline points="17 21 17 13 7 13 7 21" />
+                <polyline points="7 3 7 8 15 8" />
               </svg>
               Guardar cambios
             </button>
@@ -108,7 +108,8 @@
         <div class="side-info-card">
           <div class="info-icon">🔐</div>
           <h4>Seguridad</h4>
-          <p>Si necesitas cambiar tu contraseña, usa la opción <strong>¿Olvidaste tu contraseña?</strong> desde la pantalla de inicio de sesión.</p>
+          <p>Si necesitas cambiar tu contraseña, usa la opción <strong>¿Olvidaste tu contraseña?</strong> desde la
+            pantalla de inicio de sesión.</p>
         </div>
 
       </div>
@@ -134,23 +135,16 @@
         <table class="doc-table">
           <thead>
             <tr>
-              <th>#</th>
               <th>Tipo</th>
               <th>Número</th>
               <th>Lugar de Expedición</th>
-              <th>Estado</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let d of documentos">
-              <td class="td-id">{{ d.id_documento }}</td>
               <td><span class="tipo-badge">{{ d.tipo_documento }}</span></td>
               <td class="td-mono">{{ d.numero_documento }}</td>
               <td>{{ d.lugar_expedicion }}</td>
-              <td>
-                <span class="badge-estado activo"   *ngIf="d.estado == 1">✔ Activo</span>
-                <span class="badge-estado inactivo" *ngIf="d.estado == 0">✖ Inactivo</span>
-              </td>
             </tr>
             <tr *ngIf="documentos?.length === 0">
               <td colspan="5" class="empty-row">
@@ -189,11 +183,11 @@
         </div>
         <div class="form-actions">
           <button type="submit" class="btn-add">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="16" />
+              <line x1="8" y1="12" x2="16" y2="12" />
             </svg>
             Agregar documento
           </button>

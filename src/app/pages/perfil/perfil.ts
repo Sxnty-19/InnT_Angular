@@ -5,7 +5,8 @@ import { NavbarA } from '../../components/navbar-a/navbar-a';
 import { Footer } from '../../components/footer/footer';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Usuario } from '../../services/usuario';
-import { HttpClient } from '@angular/common/http';
+import { TipoDocumento } from '../../services/tipo-documento';
+import { Documento } from '../../services/documento';
 
 @Component({
   selector: 'app-perfil',
@@ -26,12 +27,12 @@ export class Perfil {
   constructor(
     private fb: FormBuilder,
     private usuarioService: Usuario,
-    private http: HttpClient,
+    private tipoDocumentoService: TipoDocumento,
+    private documentoService: Documento,
     private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-
     this.perfilForm = this.fb.group({
       primer_nombre: ['', Validators.required],
       segundo_nombre: [''],
@@ -52,9 +53,7 @@ export class Perfil {
   }
 
   cargarDatosUsuario() {
-
     this.usuarioService.getUsuarioToken().subscribe((res: any) => {
-
       const user = res.data;
       this.usuarioActual = user;
 
@@ -67,93 +66,58 @@ export class Perfil {
       });
 
       this.cargarDocumentos();
-
       this.cd.detectChanges();
     });
-
   }
 
   actualizarUsuario() {
-
     const data = this.perfilForm.value;
-
     this.usuarioService.updateUsuario(data).subscribe({
-
-      next: () => {
-        alert("Usuario actualizado correctamente");
-      },
-
-      error: (err) => {
-        console.error(err);
-      }
-
+      next: () => alert("Usuario actualizado correctamente"),
+      error: (err) => console.error(err)
     });
-
   }
-
-  // =========================
-  // TIPOS DOCUMENTO
-  // =========================
 
   cargarTiposDocumento() {
-
-    this.http.get<any>('https://inntech-backend.onrender.com/tipos_documento/get_tipos_documento')
-      .subscribe(res => {
-        this.tiposDoc = res.data;
-      });
-
+    this.tipoDocumentoService.getTiposDocumento().subscribe({
+      next: (res: any) => {
+        this.tiposDoc = res.data || [];
+        this.cd.detectChanges();
+      },
+      error: (err) => console.error('Error al cargar tipos de documento:', err)
+    });
   }
 
-  // =========================
-  // DOCUMENTOS USUARIO
-  // =========================
-
   cargarDocumentos() {
+    if (!this.usuarioActual) return;
 
-    this.http.get<any>('https://inntech-backend.onrender.com/documentos/get_documentos_completo')
-      .subscribe(res => {
-
+    this.documentoService.getDocumentos().subscribe({
+      next: (res: any) => {
         this.documentos = res.data.filter((d: any) =>
           d.id_usuario === this.usuarioActual[0]
         );
-
-      });
-
+        this.cd.detectChanges();
+      },
+      error: (err) => console.error('Error al cargar documentos:', err)
+    });
   }
 
-  // =========================
-  // CREAR DOCUMENTO
-  // =========================
-
   crearDocumento() {
+    if (!this.usuarioActual) return;
 
     const payload = {
       ...this.documentoForm.value,
       id_usuario: this.usuarioActual[0]
     };
 
-    this.http.post(
-      'https://inntech-backend.onrender.com/documentos/create_documento',
-      payload
-    ).subscribe({
-
+    this.documentoService.crearDocumento(payload).subscribe({
       next: () => {
-
         alert("Documento creado");
-
-        this.documentoForm.reset({
-          estado: 1
-        });
-
+        this.documentoForm.reset({ estado: 1 });
         this.cargarDocumentos();
+        this.cd.detectChanges();
       },
-
-      error: (err) => {
-        console.error(err);
-      }
-
+      error: (err) => console.error('Error al crear documento:', err)
     });
-
   }
-
 }

@@ -9,13 +9,15 @@ export class Usuario {
 
   constructor(private http: HttpClient) { }
 
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
+  }
+
   getUsuarioToken() {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.get(`${this.apiUrl}/r-token`, { headers });
+    return this.http.get(`${this.apiUrl}/r-token`, { headers: this.getHeaders() });
   }
 
   updateUsuario(data: any) {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.patch(`${this.apiUrl}/u`, data, { headers });
+    return this.http.patch(`${this.apiUrl}/u`, data, { headers: this.getHeaders() });
   }
 }

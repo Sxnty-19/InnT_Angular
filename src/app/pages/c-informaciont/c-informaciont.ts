@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
+import { Express } from '../../services/express';
 
 @Component({
   selector: 'app-c-informaciont',
@@ -11,21 +12,17 @@ import { NavbarA } from '../../components/navbar-a/navbar-a';
   styleUrl: './c-informaciont.css',
 })
 export class CInformaciont implements OnInit {
-
-  private readonly API = 'https://turismo-sm.onrender.com';
-
-  // Datos
-  eventos:   any[] = [];
-  lugares:   any[] = [];
+  eventos: any[] = [];
+  lugares: any[] = [];
   servicios: any[] = [];
 
-  // Estados de carga
   loading = { eventos: true, lugares: true, servicios: true };
-  error:   { eventos: string | null; lugares: string | null; servicios: string | null } =
-           { eventos: null, lugares: null, servicios: null };
+  error: { eventos: string | null; lugares: string | null; servicios: string | null } =
+    { eventos: null, lugares: null, servicios: null };
 
-  // Tab activa
   currentCategory: 'eventos' | 'lugares' | 'servicios' = 'eventos';
+
+  constructor(private cd: ChangeDetectorRef, private expressService: Express) { }
 
   ngOnInit(): void {
     this.cargarEventos();
@@ -33,65 +30,75 @@ export class CInformaciont implements OnInit {
     this.cargarServicios();
   }
 
-  // ========================
-  // Helper campo ES/EN
-  // ========================
   getField(item: any, esKey: string, enKey: string): string {
     return item[esKey] ?? item[enKey] ?? '-';
   }
 
-  // ========================
-  // Carga genérica con reintentos
-  // ========================
-  private async cargarData(
-    endpoint: string,
-    category: 'eventos' | 'lugares' | 'servicios'
-  ): Promise<any[]> {
-    this.loading[category] = true;
-    this.error[category] = null;
+  cargarEventos(): void {
 
-    const MAX_RETRIES = 3;
+    this.loading.eventos = true;
+    this.error.eventos = null;
 
-    for (let i = 0; i < MAX_RETRIES; i++) {
-      try {
-        const res = await fetch(`${this.API}/${endpoint}/`);
+    this.expressService.getEventos().subscribe({
 
-        if (res.ok) {
-          const data = await res.json();
-          this.loading[category] = false;
-          return data;
-        }
+      next: (data) => {
+        this.eventos = data;
+        this.loading.eventos = false;
+        this.cd.detectChanges();
+      },
 
-        if (i < MAX_RETRIES - 1) {
-          await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
-        } else {
-          throw new Error(`Error HTTP ${res.status}. No se pudo conectar.`);
-        }
-
-      } catch (e) {
-        if (i === MAX_RETRIES - 1) {
-          console.error(`Error al cargar ${category}:`, e);
-          this.error[category] = `No se pudieron cargar los ${category}.`;
-          this.loading[category] = false;
-          return [];
-        }
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+      error: (err) => {
+        console.error(err);
+        this.error.eventos = 'No se pudieron cargar los eventos.';
+        this.loading.eventos = false;
+        this.cd.detectChanges();
       }
-    }
 
-    this.loading[category] = false;
-    return [];
+    });
+
   }
 
-  async cargarEventos(): Promise<void> {
-    this.eventos = await this.cargarData('evento', 'eventos');
+  cargarLugares(): void {
+
+    this.loading.lugares = true;
+    this.error.lugares = null;
+
+    this.expressService.getLugares().subscribe({
+
+      next: (data) => {
+        this.lugares = data;
+        this.loading.lugares = false;
+        this.cd.detectChanges();
+      },
+
+      error: (err) => {
+        console.error(err);
+        this.error.lugares = 'No se pudieron cargar los lugares.';
+        this.loading.lugares = false;
+        this.cd.detectChanges();
+      }
+    });
   }
 
-  async cargarLugares(): Promise<void> {
-    this.lugares = await this.cargarData('lugar', 'lugares');
-  }
+  cargarServicios(): void {
 
-  async cargarServicios(): Promise<void> {
-    this.servicios = await this.cargarData('servicio', 'servicios');
+    this.loading.servicios = true;
+    this.error.servicios = null;
+
+    this.expressService.getServicios().subscribe({
+
+      next: (data) => {
+        this.servicios = data;
+        this.loading.servicios = false;
+        this.cd.detectChanges();
+      },
+
+      error: (err) => {
+        console.error(err);
+        this.error.servicios = 'No se pudieron cargar los servicios.';
+        this.loading.servicios = false;
+        this.cd.detectChanges();
+      }
+    });
   }
 }

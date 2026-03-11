@@ -56,26 +56,13 @@
               <th>ID Reserva</th>
               <th>Fecha Inicio</th>
               <th>Fecha Fin</th>
-              <th>Estado</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of historial; let i = index"
-                [style.animation-delay]="(i * 0.05) + 's'">
+            <tr *ngFor="let item of historial; let i = index" [style.animation-delay]="(i * 0.05) + 's'">
               <td class="td-id">#{{ item.id_reserva }}</td>
               <td>{{ item.date_start.substring(0, 10) }}</td>
               <td>{{ item.date_end.substring(0, 10) }}</td>
-              <td>
-                <span class="badge-estado terminado" *ngIf="item.estado === 'terminada'">
-                  ✔ Terminada
-                </span>
-                <span class="badge-estado cancelado" *ngIf="item.estado === 'cancelada'">
-                  ✖ Cancelada
-                </span>
-                <span class="badge-estado otro" *ngIf="item.estado !== 'terminada' && item.estado !== 'cancelada'">
-                  {{ item.estado }}
-                </span>
-              </td>
             </tr>
           </tbody>
         </table>

@@ -29,22 +29,22 @@
     <!-- TABS -->
     <div class="tabs-nav">
       <button class="tab-btn" [class.active]="activeTab === 'crear'" (click)="activeTab = 'crear'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="16"/>
-          <line x1="8" y1="12" x2="16" y2="12"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
         </svg>
         Crear Reserva
       </button>
       <button class="tab-btn" [class.active]="activeTab === 'activas'" (click)="activeTab = 'activas'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-          <line x1="16" y1="2" x2="16" y2="6"/>
-          <line x1="8" y1="2" x2="8" y2="6"/>
-          <line x1="3" y1="10" x2="21" y2="10"/>
-          <polyline points="9 16 11 18 15 14"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+          <polyline points="9 16 11 18 15 14" />
         </svg>
         Reservas Activas
         <span class="tab-badge" *ngIf="reservasActivas.length > 0">{{ reservasActivas.length }}</span>
@@ -90,10 +90,10 @@
             <!-- Botón buscar -->
             <button class="btn-search" (click)="buscarHabitaciones()" [disabled]="isLoading">
               <span class="btn-spinner" *ngIf="isLoading"></span>
-              <svg *ngIf="!isLoading" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <svg *ngIf="!isLoading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               {{ isLoading ? 'Buscando...' : 'Buscar Habitaciones' }}
             </button>
@@ -107,7 +107,8 @@
 
               <div class="room-empty" *ngIf="availRooms.length === 0">
                 <span>🔍</span>
-                <p>{{ (!date_start || !date_end) ? 'Ingresa las fechas para buscar.' : 'No hay habitaciones disponibles para el periodo seleccionado.' }}</p>
+                <p>{{ (!date_start || !date_end) ? 'Ingresa las fechas para buscar.' : 'No hay habitaciones disponibles
+                  para el periodo seleccionado.' }}</p>
               </div>
 
               <ul class="room-list" *ngIf="availRooms.length > 0">
@@ -119,10 +120,7 @@
                       <span class="room-id">ID: {{ hab.id }}</span>
                     </div>
                   </div>
-                  <button
-                    class="btn-agregar"
-                    (click)="agregarHab(hab.id)"
-                    [disabled]="isSelected(hab.id)"
+                  <button class="btn-agregar" (click)="agregarHab(hab.id)" [disabled]="isSelected(hab.id)"
                     [class.added]="isSelected(hab.id)">
                     {{ isSelected(hab.id) ? '✔ Agregada' : '+ Agregar' }}
                   </button>
@@ -183,15 +181,13 @@
             </div>
 
             <!-- Botón confirmar -->
-            <button
-              class="btn-confirm"
-              (click)="confirmarReserva()"
+            <button class="btn-confirm" (click)="confirmarReserva()"
               [disabled]="selectedRooms.length === 0 || isLoading">
               <span class="btn-spinner btn-spinner--light" *ngIf="isLoading"></span>
-              <svg *ngIf="!isLoading" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
+              <svg *ngIf="!isLoading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
               {{ isLoading ? 'Procesando...' : 'Confirmar Reserva (' + selectedRooms.length + ')' }}
             </button>
@@ -231,7 +227,6 @@
                 <th>ID Reserva</th>
                 <th>Fecha Inicio</th>
                 <th>Fecha Fin</th>
-                <th>Estado</th>
                 <th>Acción</th>
               </tr>
             </thead>
@@ -240,11 +235,8 @@
                 <td class="td-id">#{{ r.id_reserva }}</td>
                 <td>{{ r.date_start.substring(0, 10) }}</td>
                 <td>{{ r.date_end.substring(0, 10) }}</td>
-                <td><span class="badge-estado activo">✔ Activa</span></td>
                 <td>
-                  <button class="btn-cancelar"
-                    (click)="showCancelConfirmation(r.id_reserva)"
-                    [disabled]="isLoading">
+                  <button class="btn-cancelar" (click)="showCancelConfirmation(r.id_reserva)" [disabled]="isLoading">
                     Cancelar
                   </button>
                 </td>
@@ -260,19 +252,14 @@
 </div><!-- /reservas-container -->
 
 <!-- TOAST FLOTANTE -->
-<div class="notification-toast"
-     *ngIf="showMessage"
-     [class.success]="isSuccess"
-     [class.error]="!isSuccess">
+<div class="notification-toast" *ngIf="showMessage" [class.success]="isSuccess" [class.error]="!isSuccess">
   <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
   <p>{{ message }}</p>
   <button class="toast-close" (click)="hideNotification()">✕</button>
 </div>
 
 <!-- MODAL: CONFIRMAR CANCELACIÓN -->
-<div class="modal-backdrop"
-     *ngIf="isConfirmingCancel && reservationToCancel"
-     (click)="cancelConfirmation()">
+<div class="modal-backdrop" *ngIf="isConfirmingCancel && reservationToCancel" (click)="cancelConfirmation()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-icon-wrap">⚠️</div>
     <h3 class="modal-title">Confirmar Cancelación</h3>
