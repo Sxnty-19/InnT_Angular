@@ -160,7 +160,7 @@
 <div class="modal-backdrop" *ngIf="showAssignModal && currentRole" (click)="showAssignModal = false"></div>
 <div class="modal-card modal-asignar" *ngIf="showAssignModal && currentRole" (click)="$event.stopPropagation()">
   <div class="modal-card-header">
-    <h3>Asignar Módulos a: <em>{{ currentRole?.nombre }}</em></h3>
+    <h3>Asignar Módulos a: <em>{{ currentRole.nombre }}</em></h3>
     <button class="modal-close" (click)="showAssignModal = false">✕</button>
   </div>
 

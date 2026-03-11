@@ -265,10 +265,8 @@
     <h3 class="modal-title">Confirmar Cancelación</h3>
     <p class="modal-body">
       ¿Estás seguro de que deseas cancelar la reserva
-      <strong>#{{ reservationToCancel?.id_reserva }}</strong>
-      con fecha de inicio
-      <strong>{{ reservationToCancel?.date_start?.substring(0, 10) }}</strong>?
-      <br><br>
+      <strong>#{{ reservationToCancel.id_reserva }}</strong>
+<strong>{{ reservationToCancel.date_start.substring(0, 10) }}</strong>?      <br><br>
       <span class="modal-warning">Esta acción no se puede deshacer.</span>
     </p>
     <div class="modal-actions">
