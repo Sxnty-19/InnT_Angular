@@ -1,1 +1,215 @@
-<p>a-usuarios works!</p>
+<app-navbar></app-navbar>
+<app-navbar-a></app-navbar-a>
+
+<div class="usuarios-container">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-bg-dots"></div>
+    <div class="page-header-content">
+      <div class="page-header-left">
+        <span class="page-tag">✦ Administración</span>
+        <h1>Gestión de <em>Usuarios</em></h1>
+        <p>Crea, activa, desactiva y asigna roles a los usuarios del sistema.</p>
+      </div>
+      <div class="page-header-right">
+        <div class="header-stat">
+          <span class="header-stat-icon">👤</span>
+          <div>
+            <strong>{{ usuarios.length }} usuarios</strong>
+            <span>{{ getUsuariosActivos() }} activo(s)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="usuarios-body">
+
+    <!-- TABS -->
+    <div class="tabs-nav">
+      <button class="tab-btn" [class.active]="activeView === 'history'" (click)="activeView = 'history'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Ver Usuarios
+      </button>
+      <button class="tab-btn" [class.active]="activeView === 'create'" (click)="activeView = 'create'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="8.5" cy="7" r="4"/>
+          <path d="M20 8v6M23 11h-6"/>
+        </svg>
+        Crear Usuario
+      </button>
+    </div>
+
+    <!-- ============================= -->
+    <!-- VISTA: CREAR USUARIO          -->
+    <!-- ============================= -->
+    <div *ngIf="activeView === 'create'">
+      <div class="perfil-card">
+        <div class="card-header">
+          <div class="card-header-icon">➕</div>
+          <div>
+            <h3>Registrar Nuevo Usuario</h3>
+            <p>Completa los campos obligatorios (*) para crear la cuenta.</p>
+          </div>
+        </div>
+
+        <div class="form-grid-user">
+          <div class="form-group">
+            <label>Primer nombre *</label>
+            <input type="text" [(ngModel)]="nuevoUsuario.primer_nombre" placeholder="Ej: Juan" />
+          </div>
+          <div class="form-group">
+            <label>Segundo nombre</label>
+            <input type="text" [(ngModel)]="nuevoUsuario.segundo_nombre" placeholder="Ej: Carlos" />
+          </div>
+          <div class="form-group">
+            <label>Primer apellido *</label>
+            <input type="text" [(ngModel)]="nuevoUsuario.primer_apellido" placeholder="Ej: Pérez" />
+          </div>
+          <div class="form-group">
+            <label>Segundo apellido</label>
+            <input type="text" [(ngModel)]="nuevoUsuario.segundo_apellido" placeholder="Ej: Gómez" />
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" [(ngModel)]="nuevoUsuario.telefono" placeholder="Ej: 3001234567" />
+          </div>
+          <div class="form-group">
+            <label>Correo *</label>
+            <input type="email" [(ngModel)]="nuevoUsuario.correo" placeholder="Ej: usuario@correo.com" />
+          </div>
+          <div class="form-group">
+            <label>Username *</label>
+            <input type="text" [(ngModel)]="nuevoUsuario.username" placeholder="Ej: juanperez" />
+          </div>
+          <div class="form-group">
+            <label>Contraseña *</label>
+            <input type="password" [(ngModel)]="nuevoUsuario.password" placeholder="Mínimo 6 caracteres" />
+          </div>
+          <div class="form-group form-group--span2">
+            <label>Rol</label>
+            <select [(ngModel)]="nuevoUsuario.id_rol">
+              <option disabled [ngValue]="null">Seleccionar Rol</option>
+              <option *ngFor="let r of roles" [ngValue]="r.id_rol">{{ r.nombre }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn-guardar" (click)="crearUsuario()" [disabled]="isSubmitting">
+            <span class="btn-spinner btn-spinner--dark" *ngIf="isSubmitting"></span>
+            {{ isSubmitting ? 'Registrando...' : '✔ Guardar Nuevo Usuario' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================= -->
+    <!-- VISTA: LISTA DE USUARIOS      -->
+    <!-- ============================= -->
+    <div *ngIf="activeView === 'history'">
+      <div class="perfil-card">
+        <div class="card-header">
+          <div class="card-header-icon">📋</div>
+          <div>
+            <h3>Lista de Usuarios Registrados</h3>
+            <p>Gestiona el estado y el rol de cada usuario.</p>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-bar-wrap" *ngIf="loading">
+          <div class="loading-bar"></div>
+        </div>
+
+        <!-- Error -->
+        <div class="empty-state" *ngIf="!loading && error">
+          <span class="empty-icon">⚠️</span>
+          <h4>Error al cargar</h4>
+          <p>{{ error }}</p>
+        </div>
+
+        <!-- Sin usuarios -->
+        <div class="empty-state" *ngIf="!loading && !error && usuarios.length === 0">
+          <span class="empty-icon">📭</span>
+          <h4>Sin usuarios registrados</h4>
+          <p>No hay usuarios en el sistema.</p>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-wrapper" *ngIf="!loading && usuarios.length > 0">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th class="col-id">ID</th>
+                <th>Nombre Completo</th>
+                <th class="col-tel">Teléfono</th>
+                <th>Correo</th>
+                <th>Username</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of usuarios" [class.active-row]="u.estado === 1">
+                <td class="col-id td-id" [attr.data-label]="'ID'">{{ u.id_usuario }}</td>
+                <td [attr.data-label]="'Nombre Completo'">{{ getNombreCompleto(u) }}</td>
+                <td class="col-tel" [attr.data-label]="'Teléfono'">{{ u.telefono || '-' }}</td>
+                <td class="td-correo" [attr.data-label]="'Correo'">{{ u.correo }}</td>
+                <td [attr.data-label]="'Username'">{{ u.username }}</td>
+
+                <!-- Select rol — equivale a on:change con el valor parseado -->
+                <td [attr.data-label]="'Rol'">
+                  <select
+                    [ngModel]="u.id_rol"
+                    (ngModelChange)="cambiarRol(u, $event)"
+                    [disabled]="isPending(u.id_usuario)">
+                    <option *ngFor="let r of roles" [ngValue]="r.id_rol">{{ r.nombre }}</option>
+                  </select>
+                </td>
+
+                <td [attr.data-label]="'Estado'">
+                  <span class="badge-estado activo"   *ngIf="u.estado === 1">Activo</span>
+                  <span class="badge-estado inactivo" *ngIf="u.estado !== 1">Inactivo</span>
+                </td>
+
+                <td [attr.data-label]="'Acciones'">
+                  <button
+                    [class]="u.estado === 1 ? 'btn-desactivar' : 'btn-activar'"
+                    (click)="toggleEstado(u)"
+                    [disabled]="isPending(u.id_usuario)">
+                    {{ u.estado === 1 ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /usuarios-body -->
+</div><!-- /usuarios-container -->
+
+<app-footer></app-footer>
+
+<!-- TOAST FLOTANTE -->
+<div class="notification-toast"
+     *ngIf="showMessage"
+     [class.active]="isModalActive"
+     [class.success]="isSuccess"
+     [class.error]="!isSuccess">
+  <span class="toast-icon">{{ isSuccess ? '✔' : '✖' }}</span>
+  <p>{{ message }}</p>
+</div>
