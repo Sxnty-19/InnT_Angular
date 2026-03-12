@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
+import { Habitacion } from '../../services/habitacion';
+import { Reserva as ReservaService } from '../../services/reserva';
 
 interface HabDisponible {
   id: number;
@@ -27,9 +29,7 @@ interface Reserva {
 })
 export class AReservas implements OnInit {
 
-  constructor(private cd: ChangeDetectorRef) { }
-
-  private readonly BASE = 'https://inntech-backend.onrender.com';
+  constructor(private cd: ChangeDetectorRef, private habitacionService: Habitacion, private reservaService: ReservaService) { }
 
   // ========================
   // Navegación
@@ -94,70 +94,90 @@ export class AReservas implements OnInit {
   // ========================
   // Cargar TODAS las reservas — equivale a cargarReservas()
   // ========================
-  async cargarReservas(): Promise<void> {
+  cargarReservas(): void {
+
     this.loadingListado = true;
-    try {
-      const res = await fetch(`${this.BASE}/reservas/get_reservas`);
-      const data = await res.json();
-      this.reservas = res.ok ? (data.data || []) : [];
-      this.cd.detectChanges();
-    } catch (e) {
-      console.error('Error al cargar todas las reservas:', e);
-      this.reservas = [];
-      this.showNotification('Error de conexión al cargar el listado.', false);
-      this.cd.detectChanges();
-    } finally {
-      this.loadingListado = false;
-      this.cd.detectChanges();
-    }
+
+    this.reservaService.getReservas().subscribe({
+
+      next: (data) => {
+        this.reservas = data.data || [];
+        this.cd.detectChanges();
+      },
+
+      error: (err) => {
+        console.error('Error al cargar reservas:', err);
+        this.reservas = [];
+        this.showNotification('Error de conexión al cargar el listado.', false);
+        this.cd.detectChanges();
+      },
+
+      complete: () => {
+        this.loadingListado = false;
+        this.cd.detectChanges();
+      }
+
+    });
+
   }
 
   // ========================
   // Buscar habitaciones disponibles
   // ========================
-  async buscarHabitaciones(): Promise<void> {
+  buscarHabitaciones(): void {
+
     this.hideNotification();
     this.availRooms = [];
     this.isLoading = true;
 
-    try {
-      if (!this.date_start || !this.date_end) {
-        this.showNotification('Seleccione fecha inicio y fecha fin.', false);
-        return;
-      }
-      if (new Date(this.date_end) <= new Date(this.date_start)) {
-        this.showNotification('La fecha fin debe ser posterior a la fecha inicio.', false);
-        return;
-      }
-
-      const res = await fetch(
-        `${this.BASE}/habitaciones/habitaciones_disponibles?date_start=${this.date_start}&date_end=${this.date_end}`
-      );
-      const data = await res.json();
-
-      if (!res.ok) {
-        this.showNotification(data.detail || 'Error al buscar habitaciones.', false);
-        return;
-      }
-
-      this.availRooms = data.data.map((h: any) => ({
-        id: h.id_habitacion ?? h.id ?? h.id_h,
-        nombre: h.nombre ?? h.numero ?? `#${h.id_habitacion ?? h.id ?? h.id_h}`,
-        raw: h,
-      }));
-
-      if (this.availRooms.length === 0) {
-        this.showNotification('No hay habitaciones disponibles en esas fechas.', false);
-      } else {
-        this.showNotification(`Se encontraron ${this.availRooms.length} habitaciones disponibles.`, true);
-      }
-    } catch (e) {
-      console.error(e);
-      this.showNotification('No hay conexión con el servidor.', false);
-    } finally {
+    if (!this.date_start || !this.date_end) {
+      this.showNotification('Seleccione fecha inicio y fecha fin.', false);
       this.isLoading = false;
-      this.cd.detectChanges();
+      return;
     }
+
+    if (new Date(this.date_end) <= new Date(this.date_start)) {
+      this.showNotification('La fecha fin debe ser posterior a la fecha inicio.', false);
+      this.isLoading = false;
+      return;
+    }
+
+    this.habitacionService
+      .buscarHabitacionesDisponibles(this.date_start, this.date_end)
+      .subscribe({
+
+        next: (data) => {
+
+          this.availRooms = (data.data || []).map((h: any) => ({
+            id: h.id_habitacion ?? h.id ?? h.id_h,
+            nombre: h.nombre ?? h.numero ?? `#${h.id_habitacion ?? h.id ?? h.id_h}`,
+            raw: h,
+          }));
+
+          if (this.availRooms.length === 0) {
+            this.showNotification('No hay habitaciones disponibles en esas fechas.', false);
+          } else {
+            this.showNotification(
+              `Se encontraron ${this.availRooms.length} habitaciones disponibles.`,
+              true
+            );
+          }
+
+          this.cd.detectChanges();
+        },
+
+        error: (err) => {
+          console.error(err);
+          this.showNotification('No hay conexión con el servidor.', false);
+          this.cd.detectChanges();
+        },
+
+        complete: () => {
+          this.isLoading = false;
+          this.cd.detectChanges();
+        }
+
+      });
   }
 
   // ========================
@@ -189,25 +209,33 @@ export class AReservas implements OnInit {
   // ========================
   // Confirmar reserva ADMIN — equivale a confirmarReserva()
   // ========================
-  async confirmarReserva(): Promise<void> {
+  confirmarReserva(): void {
+
     this.hideNotification();
     this.isSubmitting = true;
 
     if (!this.id_usuario || isNaN(Number(this.id_usuario))) {
       this.showNotification('Debe digitar un ID de usuario válido.', false);
-      this.isSubmitting = false; return;
+      this.isSubmitting = false;
+      return;
     }
+
     if (!this.date_start || !this.date_end) {
       this.showNotification('Las fechas son obligatorias.', false);
-      this.isSubmitting = false; return;
+      this.isSubmitting = false;
+      return;
     }
+
     if (new Date(this.date_end) <= new Date(this.date_start)) {
       this.showNotification('Fecha fin debe ser posterior a fecha inicio.', false);
-      this.isSubmitting = false; return;
+      this.isSubmitting = false;
+      return;
     }
+
     if (this.selectedRooms.length === 0) {
       this.showNotification('Debe seleccionar al menos una habitación.', false);
-      this.isSubmitting = false; return;
+      this.isSubmitting = false;
+      return;
     }
 
     const payload = {
@@ -217,34 +245,36 @@ export class AReservas implements OnInit {
       habitaciones: this.selectedRooms.map(s => Number(s.id)),
     };
 
-    try {
-      const res = await fetch(`${this.BASE}/reservas/create_with_rooms`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
+    this.reservaService.crearReserva(payload).subscribe({
 
-      if (!res.ok) {
-        this.showNotification(data.detail || data.message || 'Error al crear la reserva.', false);
-        return;
+      next: (data) => {
+
+        this.showNotification(
+          `¡Reserva #${data.id_reserva || 'Nueva'} creada exitosamente!`,
+          true
+        );
+
+        this.id_usuario = '';
+        this.date_start = '';
+        this.date_end = '';
+        this.selectedRooms = [];
+        this.availRooms = [];
+
+        this.cargarReservas();
+      },
+
+      error: (err) => {
+        console.error(err);
+        this.showNotification('Error al crear la reserva.', false);
+      },
+
+      complete: () => {
+        this.isSubmitting = false;
+        this.cd.detectChanges();
       }
 
-      this.showNotification(`¡Reserva #${data.id_reserva || 'Nueva'} creada exitosamente!`, true);
-      // Limpiar y recargar — igual que Svelte
-      this.id_usuario = '';
-      this.date_start = '';
-      this.date_end = '';
-      this.selectedRooms = [];
-      this.availRooms = [];
-      await this.cargarReservas();
-    } catch (e) {
-      console.error(e);
-      this.showNotification('No hay conexión con el servidor al intentar crear la reserva.', false);
-    } finally {
-      this.isSubmitting = false;
-      this.cd.detectChanges();
-    }
+    });
+
   }
 
   // ========================
@@ -259,30 +289,38 @@ export class AReservas implements OnInit {
     this.isConfirmingCancel = true;
   }
 
-  async executeCancellation(): Promise<void> {
+  executeCancellation(): void {
+
     if (!this.reservationToCancel) return;
+
     this.isLoading = true;
+
     const id = this.reservationToCancel.id_reserva;
-    this.isConfirmingCancel = false; // Cierra modal inmediatamente igual que Svelte
 
-    try {
-      const res = await fetch(`${this.BASE}/reservas/cancelar/${id}`, { method: 'PUT' });
-      const data = await res.json();
+    this.isConfirmingCancel = false;
 
-      if (!res.ok) {
-        this.showNotification(data.detail || 'No se pudo cancelar la reserva.', false);
-        return;
+    this.reservaService.cancelarReserva(id).subscribe({
+
+      next: () => {
+
+        this.showNotification('Reserva cancelada exitosamente.', true);
+
+        this.cargarReservas();
+      },
+
+      error: (err) => {
+        console.error(err);
+        this.showNotification('Error al cancelar la reserva.', false);
+      },
+
+      complete: () => {
+        this.isLoading = false;
+        this.reservationToCancel = null;
+        this.cd.detectChanges();
       }
 
-      this.showNotification('Reserva cancelada exitosamente.', true);
-      await this.cargarReservas();
-    } catch {
-      this.showNotification('Error de conexión al intentar cancelar la reserva.', false);
-    } finally {
-      this.isLoading = false;
-      this.reservationToCancel = null;
-      this.cd.detectChanges();
-    }
+    });
+
   }
 
   cancelConfirmation(): void {

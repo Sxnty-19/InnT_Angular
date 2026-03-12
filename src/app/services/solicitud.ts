@@ -18,6 +18,16 @@ export class Solicitud {
     return this.http.get(`${this.apiUrl}/get_notificaciones`, { headers: this.getHeaders() });
   }
 
+  // ========================
+  // Obtener notificaciones por usuario
+  // ========================
+  getNotificacionesUsuario(id_usuario: number): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/usuario/${id_usuario}`,
+      { headers: this.getHeaders() }
+    );
+  }
+
   crearNotificacion(payload: {
     id_usuario: number;
     numero_habitacion: string;

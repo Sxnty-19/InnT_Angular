@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
+import { Documento } from '../../services/documento';
+import { TipoDocumento as TipoDocumentoService } from '../../services/tipo-documento';
 
 interface TipoDocumento {
   id_tdocumento: number;
@@ -11,7 +13,7 @@ interface TipoDocumento {
   descripcion: string;
 }
 
-interface Documento {
+interface Document {
   id_documento: number;
   tipo_documento: string;
   numero_documento: string;
@@ -29,15 +31,13 @@ interface Documento {
 })
 export class ADocumentos implements OnInit {
 
-  constructor(private cd: ChangeDetectorRef) { }
-
-  private readonly BASE = 'https://inntech-backend.onrender.com';
+  constructor(private cd: ChangeDetectorRef, private documentoService: Documento, private tipoDocumentoService: TipoDocumentoService) { }
 
   // ========================
   // Datos
   // ========================
   tipos: TipoDocumento[] = [];
-  documentos: Documento[] = [];
+  documentos: Document[] = [];
   loadingTipos = true;
   loadingDocumentos = true;
   error: string | null = null;
@@ -125,49 +125,63 @@ export class ADocumentos implements OnInit {
   // ========================
   // Cargar tipos de documento
   // ========================
-  async cargarTipos(): Promise<void> {
+  cargarTipos(): void {
     this.loadingTipos = true;
-    try {
-      const res = await this.fetchWithRetry(`${this.BASE}/tipos_documento/get_tipos_documento`);
-      const data = await res.json();
-      if (!data.success) throw new Error(data.detail ?? 'Error al obtener tipos');
-      this.tipos = data.data || [];
-      this.cd.detectChanges();
-    } catch (err) {
-      console.error('Error cargando tipos:', err);
-      this.error = 'No se pudieron cargar los tipos de documento.';
-      this.cd.detectChanges();
-    } finally {
-      this.loadingTipos = false;
-      this.cd.detectChanges();
-    }
+
+    this.tipoDocumentoService.getTiposDocumento().subscribe({
+      next: (data) => {
+        if (!data.success) {
+          throw new Error(data.detail ?? 'Error al obtener tipos');
+        }
+
+        this.tipos = data.data || [];
+        this.cd.detectChanges();
+      },
+
+      error: (err) => {
+        console.error('Error cargando tipos:', err);
+        this.error = 'No se pudieron cargar los tipos de documento.';
+        this.cd.detectChanges();
+      },
+
+      complete: () => {
+        this.loadingTipos = false;
+        this.cd.detectChanges();
+      }
+    });
   }
 
   // ========================
   // Cargar documentos completos
   // ========================
-  async cargarDocumentos(): Promise<void> {
+  cargarDocumentos(): void {
     this.loadingDocumentos = true;
-    try {
-      const res = await this.fetchWithRetry(`${this.BASE}/documentos/get_documentos_completo`);
-      const data = await res.json();
-      if (!data.success) throw new Error(data.detail ?? 'Error al obtener documentos');
-      this.documentos = data.data || [];
-      this.cd.detectChanges();
-    } catch (err) {
-      console.error('Error cargando documentos:', err);
-      this.error = 'No se pudieron cargar los documentos registrados.';
-      this.cd.detectChanges();
-    } finally {
-      this.loadingDocumentos = false;
-      this.cd.detectChanges();
-    }
+
+    this.documentoService.getDocumentos().subscribe({
+      next: (data) => {
+        if (!data.success) {
+          throw new Error(data.detail ?? 'Error al obtener documentos');
+        }
+        this.documentos = data.data || [];
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error cargando documentos:', err);
+        this.error = 'No se pudieron cargar los documentos registrados.';
+        this.cd.detectChanges();
+      },
+      complete: () => {
+        this.loadingDocumentos = false;
+        this.cd.detectChanges();
+      }
+    });
   }
 
   // ========================
   // Crear tipo de documento — equivale a crearTipo()
   // ========================
   async crearTipo(): Promise<void> {
+
     if (!this.nuevoTipo.nombre || !this.nuevoTipo.descripcion) {
       this.showFloatingMessage('error', 'Por favor, complete todos los campos para el nuevo tipo.');
       return;
@@ -176,33 +190,37 @@ export class ADocumentos implements OnInit {
     if (this.isSubmitting) return;
     this.isSubmitting = true;
 
-    try {
-      const res = await this.fetchWithRetry(
-        `${this.BASE}/tipos_documento/create_tipo_documento`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.nuevoTipo),
+    this.tipoDocumentoService.crearTipoDocumento(this.nuevoTipo).subscribe({
+
+      next: async (data) => {
+
+        if (!data.success) {
+          throw new Error(data.detail ?? 'El tipo ya existe o hubo un error.');
         }
-      );
 
-      const data = await res.json();
+        await this.showFloatingMessage(
+          'success',
+          `Tipo '${this.nuevoTipo.nombre}' creado con éxito.`
+        );
 
-      if (!data.success) {
-        throw new Error(data.detail ?? 'El tipo ya existe o hubo un error en el servidor.');
+        this.limpiarNuevo();
+        this.cargarTipos();
+      },
+
+      error: (err) => {
+        console.error('Error al crear tipo:', err);
+        this.showFloatingMessage(
+          'error',
+          err.message || 'Error al crear el tipo.'
+        );
+      },
+
+      complete: () => {
+        this.isSubmitting = false;
+        this.cd.detectChanges();
       }
 
-      this.showFloatingMessage('success', `Tipo '${this.nuevoTipo.nombre}' creado con éxito.`);
-      this.limpiarNuevo();
-      await this.cargarTipos();
-
-    } catch (err: any) {
-      console.error('Error al crear tipo:', err);
-      this.showFloatingMessage('error', err.message || 'Error al crear el tipo de documento. Intente de nuevo.');
-    } finally {
-      this.isSubmitting = false;
-      this.cd.detectChanges();
-    }
+    });
   }
 
   limpiarNuevo(): void {

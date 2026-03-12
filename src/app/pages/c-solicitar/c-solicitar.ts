@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
+import { Solicitud } from '../../services/solicitud';
 
 interface Notificacion {
   id_notificacion: number;
@@ -22,7 +23,7 @@ interface Notificacion {
 })
 export class CSolicitar implements OnInit {
 
-  constructor(private cd: ChangeDetectorRef) { }
+  constructor(private cd: ChangeDetectorRef, private solicitudService: Solicitud) { }
 
   private readonly API = 'https://inntech-backend.onrender.com/notificaciones';
 
@@ -109,40 +110,56 @@ export class CSolicitar implements OnInit {
   // ========================
   // Cargar notificaciones — equivale a cargarNotificaciones()
   // ========================
-  async cargarNotificaciones(): Promise<void> {
+  cargarNotificaciones(): void {
+
     if (!this.user) return;
 
-    try {
-      const res = await fetch(`${this.API}/usuario/${this.user.id_usuario}`);
-      const data = await res.json();
+    this.solicitudService
+      .getNotificacionesUsuario(this.user.id_usuario)
+      .subscribe({
 
-      if (!res.ok) {
-        this.error = data.detail ?? 'No hay notificaciones o error al cargar.';
-        this.notificaciones = [];
-      } else {
-        // Ordenar por id descendente — igual que Svelte
-        this.notificaciones = data.data.sort(
-          (a: Notificacion, b: Notificacion) => b.id_notificacion - a.id_notificacion
-        );
-      }
-      this.cd.detectChanges();
-    } catch (e) {
-      this.error = 'Error al cargar notificaciones.';
-      this.cd.detectChanges();
-    }
+        next: (data) => {
+
+          this.notificaciones = (data.data || []).sort(
+            (a: Notificacion, b: Notificacion) =>
+              b.id_notificacion - a.id_notificacion
+          );
+
+          this.cd.detectChanges();
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+          this.error = 'Error al cargar notificaciones.';
+          this.notificaciones = [];
+
+          this.cd.detectChanges();
+        }
+
+      });
+
   }
 
   // ========================
   // Crear notificación — equivale a crearNotificacion()
   // ========================
   async crearNotificacion(): Promise<void> {
+
     if (!this.user) {
-      this.showFloatingMessage('error', 'No se encontró sesión activa. Por favor, inicia sesión.');
+      this.showFloatingMessage(
+        'error',
+        'No se encontró sesión activa. Por favor, inicia sesión.'
+      );
       return;
     }
 
     if (!this.numeroHabitacion || !this.descripcion) {
-      this.showFloatingMessage('error', 'Por favor, complete el número de habitación y la descripción.');
+      this.showFloatingMessage(
+        'error',
+        'Por favor, complete el número de habitación y la descripción.'
+      );
       return;
     }
 
@@ -151,41 +168,56 @@ export class CSolicitar implements OnInit {
     this.isSubmitting = true;
     this.error = '';
 
-    if (this.showMessage) await this.hideMessageWithTransition(100);
+    const payload = {
+      id_usuario: this.user.id_usuario,
+      numero_habitacion: this.numeroHabitacion,
+      descripcion: this.descripcion,
+      estado: 1
+    };
 
-    const formData = new FormData();
-    formData.append('id_usuario', String(this.user.id_usuario));
-    formData.append('numero_habitacion', this.numeroHabitacion);
-    formData.append('descripcion', this.descripcion);
-    formData.append('estado', '1');
+    this.solicitudService.crearNotificacion(payload).subscribe({
 
-    try {
-      const res = await fetch(`${this.API}/crear_por_numero`, {
-        method: 'POST',
-        body: formData,
-      });
+      next: async (data) => {
 
-      const data = await res.json();
+        if (!data.success) {
 
-      if (!res.ok || !data.success) {
-        this.showFloatingMessage('error', data.detail ?? 'Error al crear notificación.');
-      } else {
+          this.showFloatingMessage(
+            'error',
+            data.detail ?? 'Error al crear notificación.'
+          );
+
+          return;
+        }
+
         this.showFloatingMessage(
           'success',
           `Notificación creada correctamente para Habitación ${this.numeroHabitacion}!`
         );
+
         this.numeroHabitacion = '';
         this.descripcion = '';
-        await this.cargarNotificaciones();
-        // Mueve a historial después de crear — igual que Svelte
+
+        this.cargarNotificaciones();
+
         this.activeView = 'history';
+      },
+
+      error: () => {
+
+        this.error = 'Error de conexión con el servidor.';
+
+        this.showFloatingMessage(
+          'error',
+          'Error de conexión con el servidor. Intente de nuevo.'
+        );
+      },
+
+      complete: () => {
+        this.isSubmitting = false;
+        this.cd.detectChanges();
       }
-    } catch (e) {
-      this.error = 'Error de conexión con el servidor.';
-      this.showFloatingMessage('error', 'Error de conexión con el servidor. Intente de nuevo.');
-    } finally {
-      this.isSubmitting = false;
-      this.cd.detectChanges();
-    }
+
+    });
+
   }
 }

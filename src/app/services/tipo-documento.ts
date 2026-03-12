@@ -17,4 +17,8 @@ export class TipoDocumento {
   getTiposDocumento(): Observable<any> {
     return this.http.get(`${this.apiUrl}/get_tipos_documento`, { headers: this.getHeaders() });
   }
+
+  crearTipoDocumento(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/create_tipo_documento`, payload, { headers: this.getHeaders() });
+  }
 }

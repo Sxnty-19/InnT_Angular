@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
+import { Rol as RolService } from '../../services/rol';
+import { Auth } from '../../services/auth';
+import { Usuario as UsuarioService } from '../../services/usuario';
 
 interface Usuario {
   id_usuario: number;
@@ -31,7 +34,7 @@ interface Rol {
 })
 export class AUsuarios implements OnInit {
 
-  constructor(private cd: ChangeDetectorRef) { }
+  constructor(private cd: ChangeDetectorRef, private rolService: RolService, private authService: Auth, private usuarioService: UsuarioService) { }
 
   private readonly BASE = 'https://inntech-backend.onrender.com';
 
@@ -117,74 +120,124 @@ export class AUsuarios implements OnInit {
   // ========================
   // Cargar roles — equivale a cargarRoles()
   // ========================
-  async cargarRoles(): Promise<void> {
-    try {
-      const res = await fetch(`${this.BASE}/roles/combo`);
-      if (!res.ok) throw new Error('Fallo al obtener roles');
-      const data = await res.json();
-      this.roles = data.data || [];
-      this.cd.detectChanges();
-    } catch (err) {
-      console.error('Error cargando roles:', err);
-      this.showFloatingMessage('error', 'No se pudieron cargar los roles del sistema.');
-      this.cd.detectChanges();
-    }
+  cargarRoles(): void {
+
+    this.rolService.getRoles().subscribe({
+
+      next: (data) => {
+
+        this.roles = data.data || [];
+
+        this.cd.detectChanges();
+      },
+
+      error: (err) => {
+
+        console.error('Error cargando roles:', err);
+
+        this.showFloatingMessage(
+          'error',
+          'No se pudieron cargar los roles del sistema.'
+        );
+
+        this.cd.detectChanges();
+      }
+
+    });
+
   }
 
   // ========================
   // Cargar usuarios — equivale a cargarUsuarios()
   // ========================
-  async cargarUsuarios(): Promise<void> {
+  cargarUsuarios(): void {
+
     this.loading = true;
     this.error = null;
-    try {
-      const res = await fetch(`${this.BASE}/usuarios/get_usuarios`);
-      if (!res.ok) throw new Error('Fallo al obtener usuarios');
-      const data = await res.json();
 
-      // Ordenar por id_usuario descendente (más reciente primero) — igual que Svelte
-      this.usuarios = data.data
-        ? data.data.sort((a: Usuario, b: Usuario) => b.id_usuario - a.id_usuario)
-        : [];
-      this.cd.detectChanges();
-    } catch (err) {
-      console.error('Error cargando usuarios:', err);
-      this.error = 'No se pudieron cargar los usuarios.';
-      this.showFloatingMessage('error', 'Fallo al cargar la lista de usuarios.');
-      this.cd.detectChanges();
-    } finally {
-      this.loading = false;
-      this.cd.detectChanges();
-    }
+    this.usuarioService.getUsuarios().subscribe({
+
+      next: (data) => {
+
+        this.usuarios = data.data
+          ? data.data.sort((a: Usuario, b: Usuario) => b.id_usuario - a.id_usuario)
+          : [];
+
+        this.loading = false;
+        this.cd.detectChanges();
+
+      },
+
+      error: (err) => {
+
+        console.error('Error cargando usuarios:', err);
+
+        this.error = 'No se pudieron cargar los usuarios.';
+
+        this.showFloatingMessage(
+          'error',
+          'Fallo al cargar la lista de usuarios.'
+        );
+
+        this.loading = false;
+        this.cd.detectChanges();
+
+      }
+
+    });
+
   }
 
   // ========================
   // Toggle estado — equivale a toggleEstado()
   // ========================
   async toggleEstado(usuario: Usuario): Promise<void> {
+
     if (this.showMessage) await this.hideMessageWithTransition(100);
+
     this.pendingUpdates.add(usuario.id_usuario);
     this.cd.detectChanges();
 
-    try {
-      const url = usuario.estado === 1
-        ? `${this.BASE}/usuarios/desactivar/${usuario.id_usuario}`
-        : `${this.BASE}/usuarios/activar/${usuario.id_usuario}`;
+    const request =
+      usuario.estado === 1
+        ? this.usuarioService.desactivarUsuario(usuario.id_usuario)
+        : this.usuarioService.activarUsuario(usuario.id_usuario);
 
-      const res = await fetch(url, { method: 'PUT' });
-      if (!res.ok) throw new Error('Error al cambiar el estado');
+    request.subscribe({
 
-      await this.cargarUsuarios();
-      const action = usuario.estado === 1 ? 'desactivado' : 'activado';
-      this.showFloatingMessage('success', `Usuario ${usuario.username} ha sido ${action} con éxito.`);
-    } catch (err) {
-      console.error('Error al cambiar estado:', err);
-      this.showFloatingMessage('error', 'Fallo al cambiar el estado del usuario.');
-      this.cd.detectChanges();
-    } finally {
-      this.pendingUpdates.delete(usuario.id_usuario);
-      this.cd.detectChanges();
-    }
+      next: async () => {
+
+        await this.cargarUsuarios();
+
+        const action = usuario.estado === 1 ? 'desactivado' : 'activado';
+
+        this.showFloatingMessage(
+          'success',
+          `Usuario ${usuario.username} ha sido ${action} con éxito.`
+        );
+
+      },
+
+      error: (err) => {
+
+        console.error('Error al cambiar estado:', err);
+
+        this.showFloatingMessage(
+          'error',
+          'Fallo al cambiar el estado del usuario.'
+        );
+
+      },
+
+      complete: () => {
+
+        this.pendingUpdates.delete(usuario.id_usuario);
+        this.cd.detectChanges();
+
+      }
+
+    });
+
   }
 
   // ========================
@@ -192,35 +245,56 @@ export class AUsuarios implements OnInit {
   // Llamado desde (change) del select con el nuevo id_rol como número
   // ========================
   async cambiarRol(usuario: Usuario, nuevoRolId: number): Promise<void> {
+
     if (this.showMessage) await this.hideMessageWithTransition(100);
+
     if (usuario.id_rol === nuevoRolId || isNaN(nuevoRolId)) return;
 
     this.pendingUpdates.add(usuario.id_usuario);
     this.cd.detectChanges();
 
-    try {
-      const res = await fetch(
-        `${this.BASE}/usuarios/cambiar-rol/${usuario.id_usuario}/${nuevoRolId}`,
-        { method: 'PUT' }
-      );
-      if (!res.ok) throw new Error('Error al cambiar el rol');
+    this.usuarioService
+      .cambiarRol(usuario.id_usuario, nuevoRolId)
+      .subscribe({
 
-      await this.cargarUsuarios();
-      this.showFloatingMessage('success', `Rol de ${usuario.username} actualizado correctamente.`);
-    } catch (err) {
-      console.error('Error al cambiar rol:', err);
-      this.showFloatingMessage('error', 'Fallo al cambiar el rol del usuario.');
-      this.cd.detectChanges();
-    } finally {
-      this.pendingUpdates.delete(usuario.id_usuario);
-      this.cd.detectChanges();
-    }
+        next: async () => {
+
+          await this.cargarUsuarios();
+
+          this.showFloatingMessage(
+            'success',
+            `Rol de ${usuario.username} actualizado correctamente.`
+          );
+
+        },
+
+        error: (err) => {
+
+          console.error('Error al cambiar rol:', err);
+
+          this.showFloatingMessage(
+            'error',
+            'Fallo al cambiar el rol del usuario.'
+          );
+
+        },
+
+        complete: () => {
+
+          this.pendingUpdates.delete(usuario.id_usuario);
+          this.cd.detectChanges();
+
+        }
+
+      });
+
   }
 
   // ========================
   // Crear usuario — equivale a crearUsuario()
   // ========================
   async crearUsuario(): Promise<void> {
+
     if (
       !this.nuevoUsuario.primer_nombre ||
       !this.nuevoUsuario.primer_apellido ||
@@ -228,38 +302,58 @@ export class AUsuarios implements OnInit {
       !this.nuevoUsuario.username ||
       !this.nuevoUsuario.password
     ) {
-      this.showFloatingMessage('error', 'Por favor, rellena los campos obligatorios (*).');
+      this.showFloatingMessage(
+        'error',
+        'Por favor, rellena los campos obligatorios (*).'
+      );
       return;
     }
 
     if (this.isSubmitting) return;
+
     this.isSubmitting = true;
     this.cd.detectChanges();
+
     if (this.showMessage) await this.hideMessageWithTransition(100);
 
-    try {
-      const res = await fetch(`${this.BASE}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(this.nuevoUsuario),
-      });
+    this.authService.register(this.nuevoUsuario).subscribe({
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.detail || `Error ${res.status} al registrar.`);
+      next: async () => {
+
+        this.limpiarNuevo();
+
+        await this.cargarUsuarios();
+
+        this.activeView = 'history';
+
+        this.showFloatingMessage(
+          'success',
+          'Usuario creado y registrado con éxito.'
+        );
+
+      },
+
+      error: (err) => {
+
+        console.error('Error al crear usuario:', err);
+
+        const message =
+          err?.error?.detail ||
+          'Error desconocido al intentar crear el usuario.';
+
+        this.showFloatingMessage('error', message);
+
+      },
+
+      complete: () => {
+
+        this.isSubmitting = false;
+        this.cd.detectChanges();
+
       }
 
-      this.limpiarNuevo();
-      await this.cargarUsuarios();
-      this.activeView = 'history'; // Cambiar vista después de crear — igual que Svelte
-      this.showFloatingMessage('success', 'Usuario creado y registrado con éxito.');
-    } catch (err: any) {
-      console.error('Error al crear usuario:', err);
-      this.showFloatingMessage('error', err.message || 'Error desconocido al intentar crear el usuario.');
-    } finally {
-      this.isSubmitting = false;
-      this.cd.detectChanges();
-    }
+    });
+
   }
 
   limpiarNuevo(): void {

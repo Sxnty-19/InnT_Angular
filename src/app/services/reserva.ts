@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class Reserva {
-  private apiUrl = 'https://inntech-backend.onrender.com';
+  private apiUrl = 'https://inntech-backend.onrender.com/reservas';
 
   constructor(private http: HttpClient) { }
 
@@ -14,23 +14,26 @@ export class Reserva {
     return new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
   }
 
-  getReservasActivas(id_usuario: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/reservas/activas/${id_usuario}`, { headers: this.getHeaders() });
+  getReservas(): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/get_reservas`,
+      { headers: this.getHeaders() }
+    );
   }
 
-  getHabitacionesDisponibles(date_start: string, date_end: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/habitaciones/habitaciones_disponibles?date_start=${date_start}&date_end=${date_end}`, { headers: this.getHeaders() });
+  getReservasActivas(id_usuario: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/activas/${id_usuario}`, { headers: this.getHeaders() });
   }
 
   crearReserva(payload: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/reservas/create_with_rooms`, payload, { headers: this.getHeaders() });
+    return this.http.post(`${this.apiUrl}/create_with_rooms`, payload, { headers: this.getHeaders() });
   }
 
   cancelarReserva(id: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/reservas/cancelar/${id}`, {}, { headers: this.getHeaders() });
+    return this.http.put(`${this.apiUrl}/cancelar/${id}`, {}, { headers: this.getHeaders() });
   }
 
   getHistorial(id_usuario: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/reservas/terminadas/${id_usuario}`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/terminadas/${id_usuario}`, { headers: this.getHeaders() });
   }
 }

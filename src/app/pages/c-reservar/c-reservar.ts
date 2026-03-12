@@ -5,6 +5,7 @@ import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
 import { Reserva } from '../../services/reserva';
+import { Habitacion } from '../../services/habitacion';
 
 interface Room {
   id: number;
@@ -43,7 +44,7 @@ export class CReservar implements OnInit {
   isConfirmingCancel = false;
   reservationToCancel: ReservaActiva | null = null;
 
-  constructor(private cd: ChangeDetectorRef, private reservaService: Reserva) { }
+  constructor(private cd: ChangeDetectorRef, private reservaService: Reserva, private habitacionService: Habitacion) { }
 
   ngOnInit(): void {
     const id_usuario = localStorage.getItem('id_usuario');
@@ -109,8 +110,8 @@ export class CReservar implements OnInit {
       return;
     }
 
-    this.reservaService
-      .getHabitacionesDisponibles(this.date_start, this.date_end)
+    this.habitacionService
+      .buscarHabitacionesDisponibles(this.date_start, this.date_end)
       .subscribe({
         next: (data) => {
           this.availRooms = data.data.map((h: any) => ({

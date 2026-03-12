@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
+import { Habitacion as HabitacionService } from '../../services/habitacion';
 
 interface Habitacion {
   numero: number;
@@ -18,9 +19,7 @@ interface Habitacion {
 })
 export class LHabitaciones implements OnInit {
 
-  constructor(private cd: ChangeDetectorRef) { }
-
-  private readonly API = 'https://inntech-backend.onrender.com/habitaciones';
+  constructor(private cd: ChangeDetectorRef, private habitacionService: HabitacionService) { }
 
   // ========================
   // Estado
@@ -67,69 +66,96 @@ export class LHabitaciones implements OnInit {
   // ========================
   // Cargar habitaciones — equivale a cargarHabitaciones()
   // ========================
-  async cargarHabitaciones(): Promise<void> {
+  cargarHabitaciones(): void {
+
     this.loading = true;
     this.error = null;
 
-    try {
-      const res = await fetch(`${this.API}/get_habitaciones`);
-      const data = await res.json();
+    this.habitacionService.getHabitaciones().subscribe({
 
-      if (!data.success) throw new Error(data.detail ?? 'Error al cargar.');
+      next: (data) => {
 
-      // Ordenar: sucias (0) primero, luego limpias (1) — igual que Svelte
-      this.habitaciones = data.data.sort(
-        (a: Habitacion, b: Habitacion) => a.estado - b.estado
-      );
-      this.cd.detectChanges();
-    } catch (e) {
-      console.error(e);
-      this.error = 'No se pudieron cargar las habitaciones. Verifique la conexión al servidor.';
-      this.showNotification(this.error, false, 4000);
-      this.cd.detectChanges();
-    } finally {
-      this.loading = false;
-      this.cd.detectChanges();
-    }
+        if (!data.success) {
+          throw new Error(data.detail ?? 'Error al cargar.');
+        }
+
+        this.habitaciones = data.data.sort(
+          (a: Habitacion, b: Habitacion) => a.estado - b.estado
+        );
+
+        this.cd.detectChanges();
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+        this.error =
+          'No se pudieron cargar las habitaciones. Verifique la conexión al servidor.';
+
+        this.showNotification(this.error, false, 4000);
+
+        this.cd.detectChanges();
+      },
+
+      complete: () => {
+        this.loading = false;
+        this.cd.detectChanges();
+      }
+
+    });
+
   }
 
   // ========================
   // Marcar limpia — equivale a marcarLimpia()
   // ========================
-  async marcarLimpia(numero: number): Promise<void> {
-    try {
-      const formData = new FormData();
-      formData.append('numero', String(numero));
-      formData.append('estado', '1');
+  marcarLimpia(numero: number): void {
 
-      const res = await fetch(`${this.API}/actualizar_estado`, {
-        method: 'PUT',
-        body: formData,
-      });
+    this.habitacionService.updateEstado(String(numero), 1).subscribe({
 
-      const data = await res.json();
+      next: (data) => {
 
-      if (!data.success) {
-        console.error('Error del servidor al actualizar:', data.detail);
+        if (!data.success) {
+
+          console.error('Error del servidor al actualizar:', data.detail);
+
+          this.showNotification(
+            `Error al marcar habitación ${numero}: ${data.detail || 'Fallo desconocido.'}`,
+            false,
+            4000
+          );
+
+          return;
+        }
+
+        this.habitaciones = this.habitaciones
+          .map(h => h.numero === numero ? { ...h, estado: 1 } : h)
+          .sort((a, b) => a.estado - b.estado);
+
+        this.cd.detectChanges();
+
         this.showNotification(
-          `Error al marcar habitación ${numero}: ${data.detail || 'Fallo desconocido.'}`,
+          `Habitación ${numero} marcada como limpia con éxito.`,
+          true,
+          3000
+        );
+
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+        this.showNotification(
+          'Error de conexión. Inténtalo de nuevo más tarde.',
           false,
           4000
         );
-        return;
+
       }
 
-      // Actualizar visualmente y reordenar — igual que Svelte
-      this.habitaciones = this.habitaciones
-        .map(h => h.numero === numero ? { ...h, estado: 1 } : h)
-        .sort((a, b) => a.estado - b.estado);
+    });
 
-      this.cd.detectChanges();
-      this.showNotification(`Habitación ${numero} marcada como limpia con éxito.`, true, 3000);
-
-    } catch (e) {
-      console.error('Error de conexión al marcar como limpia:', e);
-      this.showNotification('Error de conexión. Inténtalo de nuevo más tarde.', false, 4000);
-    }
   }
 }

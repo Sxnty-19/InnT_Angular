@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
+import { Habitacion as Habitacionservice } from '../../services/habitacion';
+import { TipoHabitacion as TipoHabitacionService } from '../../services/tipo-habitacion';
 
 interface TipoHabitacion {
   id_thabitacion: number;
@@ -28,9 +30,7 @@ interface Habitacion {
 })
 export class AHabitaciones implements OnInit {
 
-  constructor(private cd: ChangeDetectorRef) { }
-
-  private readonly BASE = 'https://inntech-backend.onrender.com';
+  constructor(private cd: ChangeDetectorRef, private habitacionService: Habitacionservice, private tipoHabitacionService: TipoHabitacionService) { }
 
   // ========================
   // Datos
@@ -110,118 +110,176 @@ export class AHabitaciones implements OnInit {
   // ========================
   // Cargar tipos de habitación
   // ========================
-  async cargarTipos(): Promise<void> {
+  cargarTipos(): void {
+
     this.loadingTipos = true;
     this.errorTipos = null;
-    try {
-      const data = await this.safeFetch(`${this.BASE}/tipos_habitacion/get_tipos_habitacion`);
-      this.tipos = data.data || [];
-      this.cd.detectChanges();
-    } catch {
-      this.errorTipos = 'No se pudieron cargar los tipos de habitación.';
-      this.cd.detectChanges();
-    } finally {
-      this.loadingTipos = false;
-      this.cd.detectChanges();
-    }
+
+    this.tipoHabitacionService.getTiposHabitacion().subscribe({
+
+      next: (data) => {
+        this.tipos = data.data || [];
+        this.cd.detectChanges();
+      },
+
+      error: (err) => {
+        console.error('Error cargando tipos:', err);
+        this.errorTipos = 'No se pudieron cargar los tipos de habitación.';
+        this.cd.detectChanges();
+      },
+
+      complete: () => {
+        this.loadingTipos = false;
+        this.cd.detectChanges();
+      }
+
+    });
   }
 
   // ========================
   // Cargar habitaciones
   // ========================
-  async cargarHabitaciones(): Promise<void> {
+  cargarHabitaciones(): void {
+
     this.loadingHabitaciones = true;
     this.errorHabitaciones = null;
-    try {
-      const data = await this.safeFetch(`${this.BASE}/habitaciones/get_habitaciones`);
-      this.habitaciones = data.data || [];
-      this.cd.detectChanges();
-    } catch {
-      this.errorHabitaciones = 'No se pudieron cargar las habitaciones.';
-      this.cd.detectChanges();
-    } finally {
-      this.loadingHabitaciones = false;
-      this.cd.detectChanges();
-    }
+
+    this.habitacionService.getHabitaciones().subscribe({
+
+      next: (data) => {
+        this.habitaciones = data.data || [];
+        this.cd.detectChanges();
+      },
+
+      error: (err) => {
+        console.error('Error cargando habitaciones:', err);
+        this.errorHabitaciones = 'No se pudieron cargar las habitaciones.';
+        this.cd.detectChanges();
+      },
+
+      complete: () => {
+        this.loadingHabitaciones = false;
+        this.cd.detectChanges();
+      }
+
+    });
   }
 
   // ========================
   // Guardar tipo — equivale a guardarTipo()
   // ========================
-  async guardarTipo(): Promise<void> {
+  guardarTipo(): void {
+
     if (!this.nuevoTipo.nombre || !this.nuevoTipo.capacidad_max) {
       this.showCustomMessage('Por favor, complete el nombre y la capacidad máxima.', false);
       return;
     }
+
     if (this.isSubmittingTipo) return;
+
     this.isSubmittingTipo = true;
-    try {
-      await this.safeFetch(`${this.BASE}/tipos_habitacion/create_tipo_habitacion`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(this.nuevoTipo),
-      });
-      this.showCustomMessage(`Tipo "${this.nuevoTipo.nombre}" creado exitosamente.`, true);
-      this.nuevoTipo = { nombre: '', descripcion: '', capacidad_max: '', estado: 1 };
-      await this.cargarTipos();
-    } catch {
-      // El mensaje de error ya se muestra en safeFetch
-    } finally {
-      this.isSubmittingTipo = false;
-      this.cd.detectChanges();
-    }
+
+    this.tipoHabitacionService.createTipoHabitacion(this.nuevoTipo).subscribe({
+
+      next: () => {
+
+        this.showCustomMessage(
+          `Tipo "${this.nuevoTipo.nombre}" creado exitosamente.`,
+          true
+        );
+
+        this.nuevoTipo = {
+          nombre: '',
+          descripcion: '',
+          capacidad_max: '',
+          estado: 1
+        };
+
+        this.cargarTipos();
+      },
+
+      error: (err) => {
+        console.error('Error creando tipo:', err);
+        this.showCustomMessage('Error al crear el tipo de habitación.', false);
+      },
+
+      complete: () => {
+        this.isSubmittingTipo = false;
+        this.cd.detectChanges();
+      }
+
+    });
   }
 
   // ========================
   // Guardar habitación — equivale a guardarHabitacion()
   // ========================
-  async guardarHabitacion(): Promise<void> {
+  guardarHabitacion(): void {
+
     if (!this.nuevaHabitacion.id_thabitacion || !this.nuevaHabitacion.numero) {
       this.showCustomMessage('Por favor, seleccione el tipo y el número de habitación.', false);
       return;
     }
+
     if (this.isSubmittingHabitacion) return;
+
     this.isSubmittingHabitacion = true;
-    try {
-      await this.safeFetch(`${this.BASE}/habitaciones/create_habitacion`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(this.nuevaHabitacion),
-      });
-      this.showCustomMessage(`Habitación ${this.nuevaHabitacion.numero} registrada.`, true);
-      this.nuevaHabitacion = { id_thabitacion: '', numero: '', estado: 1 };
-      await this.cargarHabitaciones();
-    } catch {
-      // El mensaje de error ya se muestra en safeFetch
-    } finally {
-      this.isSubmittingHabitacion = false;
-      this.cd.detectChanges();
-    }
+
+    this.habitacionService.createHabitacion(this.nuevaHabitacion).subscribe({
+
+      next: () => {
+
+        this.showCustomMessage(`Habitación ${this.nuevaHabitacion.numero} registrada.`, true);
+
+        this.nuevaHabitacion = {
+          id_thabitacion: '',
+          numero: '',
+          estado: 1
+        };
+
+        this.cargarHabitaciones();
+      },
+
+      error: (err) => {
+        console.error('Error creando habitación:', err);
+        this.showCustomMessage('Error al registrar la habitación.', false);
+      },
+
+      complete: () => {
+        this.isSubmittingHabitacion = false;
+        this.cd.detectChanges();
+      }
+
+    });
   }
 
   // ========================
   // Toggle estado habitación — equivale a toggleEstado()
   // Usa FormData igual que el original
   // ========================
-  async toggleEstado(h: Habitacion): Promise<void> {
+  toggleEstado(h: Habitacion): void {
+
     const nuevo = h.estado === 1 ? 0 : 1;
     const nuevoEstadoTexto = nuevo === 1 ? 'LIMPIA' : 'SUCIA';
 
-    const formData = new FormData();
-    formData.append('numero', h.numero);
-    formData.append('estado', nuevo.toString());
+    this.habitacionService.updateEstado(h.numero, nuevo).subscribe({
 
-    try {
-      await this.safeFetch(`${this.BASE}/habitaciones/actualizar_estado`, {
-        method: 'PUT',
-        body: formData,
-      });
-      this.showCustomMessage(`Habitación ${h.numero} marcada como ${nuevoEstadoTexto}.`, true);
-      await this.cargarHabitaciones();
-      this.cd.detectChanges();
-    } catch {
-      // El mensaje de error ya se muestra en safeFetch
-    }
+      next: () => {
+
+        this.showCustomMessage(
+          `Habitación ${h.numero} marcada como ${nuevoEstadoTexto}.`,
+          true
+        );
+
+        this.cargarHabitaciones();
+      },
+
+      error: (err) => {
+        console.error('Error actualizando estado:', err);
+        this.showCustomMessage('Error al actualizar el estado.', false);
+      }
+
+    });
   }
 
   // ========================
