@@ -6,22 +6,8 @@ import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
 import { Documento } from '../../services/documento';
 import { TipoDocumento as TipoDocumentoService } from '../../services/tipo-documento';
-
-interface TipoDocumento {
-  id_tdocumento: number;
-  nombre: string;
-  descripcion: string;
-}
-
-interface Document {
-  id_documento: number;
-  tipo_documento: string;
-  numero_documento: string;
-  lugar_expedicion: string;
-  nombre_completo: string;
-  estado: number;
-  date_created: string;
-}
+import { Documento as DocumentoInterface } from '../../interfaces/documento';
+import { TipoDocumento as TipoDocumentoInterface } from '../../interfaces/tipo-documento';
 
 @Component({
   selector: 'app-a-documentos',
@@ -36,8 +22,8 @@ export class ADocumentos implements OnInit {
   // ========================
   // Datos
   // ========================
-  tipos: TipoDocumento[] = [];
-  documentos: Document[] = [];
+  tipos: TipoDocumentoInterface[] = [];
+  documentos: DocumentoInterface[] = [];
   loadingTipos = true;
   loadingDocumentos = true;
   error: string | null = null;

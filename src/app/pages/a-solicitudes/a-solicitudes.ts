@@ -5,15 +5,7 @@ import { NavbarA } from '../../components/navbar-a/navbar-a';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Solicitud } from '../../services/solicitud';
-
-interface Notificacion {
-  id_notificacion: number;
-  id_usuario: number;
-  id_habitacion: number;
-  descripcion: string;
-  estado: number;
-  date_created: string;
-}
+import { Notificacion } from '../../interfaces/notificacion';
 
 @Component({
   selector: 'app-a-solicitudes',

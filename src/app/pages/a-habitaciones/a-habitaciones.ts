@@ -6,21 +6,8 @@ import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
 import { Habitacion as Habitacionservice } from '../../services/habitacion';
 import { TipoHabitacion as TipoHabitacionService } from '../../services/tipo-habitacion';
-
-interface TipoHabitacion {
-  id_thabitacion: number;
-  nombre: string;
-  descripcion: string;
-  capacidad_max: number;
-  estado: number;
-}
-
-interface Habitacion {
-  id_habitacion: number;
-  id_thabitacion: number;
-  numero: string;
-  estado: number;
-}
+import { Habitacion } from '../../interfaces/habitacion';
+import { TipoHabitacion } from '../../interfaces/tipo-habitacion';
 
 @Component({
   selector: 'app-a-habitaciones',

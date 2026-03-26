@@ -6,20 +6,8 @@ import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
 import { Habitacion } from '../../services/habitacion';
 import { Reserva as ReservaService } from '../../services/reserva';
-
-interface HabDisponible {
-  id: number;
-  nombre: string;
-  raw: any;
-}
-
-interface Reserva {
-  id_reserva: number;
-  id_usuario: number;
-  date_start: string;
-  date_end: string;
-  estado: number;
-}
+import { HabDisponible } from '../../interfaces/hab-disponible';
+import { Reserva } from '../../interfaces/reserva';
 
 @Component({
   selector: 'app-a-reservas',

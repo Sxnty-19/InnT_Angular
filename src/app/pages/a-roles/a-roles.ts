@@ -4,26 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { NavbarA } from '../../components/navbar-a/navbar-a';
-
-interface Rol {
-  id_rol: number;
-  nombre: string;
-  descripcion: string;
-  estado: number;
-}
-
-interface Modulo {
-  id_modulo: number;
-  nombre: string;
-  ruta: string;
-}
-
-interface ModuloAsignado {
-  id_modulo?: number;
-  id_mxr?: number;
-  nombre: string;
-  ruta: string;
-}
+import { Rol } from '../../interfaces/rol';
+import { Modulo } from '../../interfaces/modulo';
+import { ModuloAsignado } from '../../interfaces/modulo-asignado';
 
 @Component({
   selector: 'app-a-roles',

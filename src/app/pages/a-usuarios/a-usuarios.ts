@@ -7,24 +7,8 @@ import { NavbarA } from '../../components/navbar-a/navbar-a';
 import { Rol as RolService } from '../../services/rol';
 import { Auth } from '../../services/auth';
 import { Usuario as UsuarioService } from '../../services/usuario';
-
-interface Usuario {
-  id_usuario: number;
-  primer_nombre: string;
-  segundo_nombre: string;
-  primer_apellido: string;
-  segundo_apellido: string;
-  telefono: string;
-  correo: string;
-  username: string;
-  id_rol: number;
-  estado: number;
-}
-
-interface Rol {
-  id_rol: number;
-  nombre: string;
-}
+import { Usuario } from '../../interfaces/usuario';
+import { Rol } from '../../interfaces/rol';
 
 @Component({
   selector: 'app-a-usuarios',
