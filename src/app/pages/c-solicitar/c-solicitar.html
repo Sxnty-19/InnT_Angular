@@ -127,7 +127,7 @@
               <tr *ngFor="let item of notificaciones" [class.row-activa]="item.estado === 1">
                 <td class="td-hab">{{ item.id_habitacion }}</td>
                 <td class="td-desc">{{ item.descripcion }}</td>
-                <td>{{ item.date_created.substring(0, 10) }}</td>
+                <td>{{ item.date_created | date:'longDate' }}</td>
               </tr>
             </tbody>
           </table>

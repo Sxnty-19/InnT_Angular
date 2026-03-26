@@ -233,8 +233,10 @@
             <tbody>
               <tr *ngFor="let r of reservasActivas">
                 <td class="td-id">#{{ r.id_reserva }}</td>
-                <td>{{ r.date_start.substring(0, 10) }}</td>
-                <td>{{ r.date_end.substring(0, 10) }}</td>
+
+                <td>{{ r.date_start | date:'longDate' }}</td>
+                <td>{{ r.date_end | date:'longDate' }}</td>
+
                 <td>
                   <button class="btn-cancelar" (click)="showCancelConfirmation(r.id_reserva)" [disabled]="isLoading">
                     Cancelar
@@ -266,7 +268,7 @@
     <p class="modal-body">
       ¿Estás seguro de que deseas cancelar la reserva
       <strong>#{{ reservationToCancel.id_reserva }}</strong>
-<strong>{{ reservationToCancel.date_start.substring(0, 10) }}</strong>?      <br><br>
+      <strong>{{ reservationToCancel.date_start.substring(0, 10) }}</strong>? <br><br>
       <span class="modal-warning">Esta acción no se puede deshacer.</span>
     </p>
     <div class="modal-actions">
